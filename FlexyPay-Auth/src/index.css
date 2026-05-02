@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  --color-primary: #0A64FF;
+  --color-primary-hover: #0850CC;
+  --color-success: #1DBB62;
+  --color-background: #F4F7FA;
+  --color-surface: #FFFFFF;
+  --color-text-main: #0F172A;
+  --color-text-muted: #64748B;
+  --color-border: #E2E8F0;
+  --color-input-bg: #F8FAFC;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-main font-sans antialiased;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(10, 100, 255, 0.08), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(29, 187, 98, 0.08), transparent 25%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+      0 10px 40px -10px rgba(0, 0, 0, 0.08),
+      0 0 20px 0 rgba(255, 255, 255, 0.5) inset;
+  }
+
+  .neumorphic-button {
+    background: #FFFFFF;
+    box-shadow: 
+      6px 6px 14px 0 rgba(0, 0, 0, 0.04),
+      -6px -6px 14px 0 rgba(255, 255, 255, 1);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .neumorphic-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+      8px 8px 16px 0 rgba(0, 0, 0, 0.05),
+      -8px -8px 16px 0 rgba(255, 255, 255, 1);
+  }
+
+  .neumorphic-button:active {
+    transform: translateY(1px);
+    box-shadow: 
+      inset 4px 4px 10px rgba(0, 0, 0, 0.03), 
+      inset -4px -4px 10px rgba(255, 255, 255, 0.5);
+  }
+
+  .neumorphic-input {
+    background: #FFFFFF;
+    box-shadow: 
+      inset 2px 2px 6px rgba(0, 0, 0, 0.03), 
+      inset -2px -2px 6px rgba(255, 255, 255, 1);
+    border: 1px solid #E2E8F0;
+    transition: all 0.2s ease;
+  }
+  
+  .neumorphic-input:focus-within {
+    box-shadow: 
+      inset 2px 2px 6px rgba(10, 100, 255, 0.05), 
+      0 0 0 2px rgba(10, 100, 255, 0.2);
+    border-color: #0A64FF;
+  }
+  
+  .neumorphic-otp {
+    background: #F8FAFC;
+    box-shadow: 
+      inset 3px 3px 6px rgba(0, 0, 0, 0.04), 
+      inset -3px -3px 6px rgba(255, 255, 255, 0.8),
+      3px 3px 8px rgba(0, 0, 0, 0.02), 
+      -3px -3px 8px rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+  }
+
+  .neumorphic-otp:focus {
+    background: #FFFFFF;
+    box-shadow: 
+      inset 2px 2px 4px rgba(10, 100, 255, 0.05),
+      0 0 0 2px rgba(10, 100, 255, 0.3);
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820058558103",
+    "project_id": "flexypay-82d33",
+    "storage_bucket": "flexypay-82d33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820058558103:android:af872cf9153055b5fee3d2",
+        "android_client_info": {
+          "package_name": "com.quickdrop.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnNNWXeAVnJhHph9I0sei38WQngwWE1tA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
