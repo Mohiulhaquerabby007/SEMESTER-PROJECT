@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.quickdrop.app-mergeDebugResources-35:/values-h720dp-v13/values-h720dp-v13.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Mohiul\\.gradle\\caches\\9.3.1\\transforms\\7066a66a9b4322d0354b4d699733efd0\\workspace\\transformed\\appcompat-1.7.1\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "66",
+                        "endOffsets": "117"
+                    }
+                }
+            ]
+        }
+    ]
+}

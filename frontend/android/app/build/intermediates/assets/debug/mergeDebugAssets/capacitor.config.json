@@ -1,0 +1,8 @@
+{
+	"appId": "com.quickdrop.app",
+	"appName": "QuickDrop",
+	"webDir": "dist",
+	"server": {
+		"cleartext": true
+	}
+}
