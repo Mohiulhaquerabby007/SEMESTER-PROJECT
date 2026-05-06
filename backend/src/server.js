@@ -48,11 +48,33 @@ io.on("connection", (socket) => {
 
 try {
   const admin = require("firebase-admin");
-  const serviceAccount = require("./config/firebase-service-account.json");
-  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-  console.log("🔥 Firebase Admin initialized");
-} catch {
-  console.log("⚠️ Firebase Admin not initialized (service account missing)");
+  const fs = require("fs");
+  const path = require("path");
+
+  // Look in different locations for the service account file
+  const possiblePaths = [
+    path.join(__dirname, "config", "firebase-service-account.json"), // Local src/config
+    path.join(process.cwd(), "firebase-service-account.json"),       // Root (Render Secret File)
+    "/etc/secrets/firebase-service-account.json"                    // Render standard secret path
+  ];
+
+  let serviceAccount;
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      serviceAccount = require(p);
+      console.log(`✅ Loading Firebase credentials from: ${p}`);
+      break;
+    }
+  }
+
+  if (serviceAccount) {
+    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+    console.log("🔥 Firebase Admin initialized");
+  } else {
+    throw new Error("Service account file not found in any expected location");
+  }
+} catch (err) {
+  console.log("⚠️ Firebase Admin not initialized:", err.message);
 }
 
 app.use(cors({
