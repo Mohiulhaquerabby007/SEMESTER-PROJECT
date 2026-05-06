@@ -1,5 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import api from "../services/api";
 
 const navConfig = {
   user: [
@@ -13,6 +15,7 @@ const navConfig = {
     { path: "/rider/pending",    icon: "inbox",          label: "Available Jobs" },
     { path: "/rider/deliveries", icon: "local_shipping", label: "My Deliveries", filled: true },
     { path: "/rider/earnings",   icon: "payments",       label: "Earnings" },
+    { path: "/rider/profile",    icon: "person",         label: "Profile" },
   ],
   admin: [
     { path: "/admin/dashboard", icon: "bar_chart",       label: "Dashboard" },
@@ -31,6 +34,8 @@ const Sidebar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const profilePath = user?.accountType === "rider" ? "/rider/profile" : "/user/profile";
 
   if (!user) return null;
   const items = navConfig[user.accountType] || [];

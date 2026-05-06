@@ -18,8 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, "Phone is required"],
-      unique: true,
+      default: "",
       trim: true,
     },
     password: {
@@ -47,6 +46,10 @@ const userSchema = new mongoose.Schema(
     },
     fcmToken: {
       type: String,
+      default: null,
+    },
+    lastLogin: {
+      type: Date,
       default: null,
     },
   },

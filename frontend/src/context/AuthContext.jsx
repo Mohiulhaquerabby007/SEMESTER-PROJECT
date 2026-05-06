@@ -29,6 +29,14 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
+  const googleLogin = async (googleIdToken) => {
+    const { data } = await api.post("/auth/google-login", { token: googleIdToken });
+    const userData = { ...data, accountType: data.role === "admin" ? "admin" : "user" };
+    localStorage.setItem("quickdrop_auth", JSON.stringify(userData));
+    setUser(userData);
+    return userData;
+  };
+
   const register = async (payload, isRider = false) => {
     const endpoint = isRider ? "/auth/rider/register" : "/auth/register";
     const { data } = await api.post(endpoint, payload);
@@ -51,7 +59,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, googleLogin, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

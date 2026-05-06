@@ -14,31 +14,46 @@ const ChatBox = ({ orderId }) => {
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ["chat", orderId],
     queryFn: () => api.get(`/chat/${orderId}`).then((r) => r.data),
-    refetchInterval: 3000, // Poll every 3 seconds
   });
 
+  useEffect(() => {
+    import("../services/socket").then(({ default: socket }) => {
+      socket.emit("join_order_room", orderId);
+      
+      const handleMessage = (msg) => {
+        // If it's not our own message, show a toast
+        if (msg.senderId !== user._id) {
+          toast.success("New message received", { icon: "💬" });
+        }
+        queryClient.invalidateQueries({ queryKey: ["chat", orderId] });
+      };
+
+      socket.on("receive_message", handleMessage);
+
+      return () => {
+        socket.off("receive_message", handleMessage);
+      };
+    });
+  }, [orderId, queryClient, user._id]);
+
   const sendMutation = useMutation({
-    mutationFn: (msg) => api.post(`/chat/${orderId}`, { text: msg }),
+    mutationFn: async (msgText) => {
+      // Optimistically emit via socket for fast delivery, and also save via API
+      const { default: socket } = await import("../services/socket");
+      socket.emit("send_message", {
+        orderId,
+        senderId: user._id,
+        senderModel: user.accountType === "rider" ? "Rider" : "User",
+        text: msgText
+      });
+      return api.post(`/chat/${orderId}`, { text: msgText });
+    },
     onSuccess: () => {
       setText("");
       queryClient.invalidateQueries({ queryKey: ["chat", orderId] });
-      toast.success("Message sent", { icon: "💬" });
     },
-    onError: () => {
-      toast.error("Failed to send message");
-    }
+    onError: () => toast.error("Failed to send message")
   });
-
-  // Notifications for new received messages
-  useEffect(() => {
-    if (messages.length > prevMessagesLength.current && prevMessagesLength.current > 0) {
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage.sender !== user._id) {
-        toast.success("New message received", { icon: "💬" });
-      }
-    }
-    prevMessagesLength.current = messages.length;
-  }, [messages, user._id]);
 
   // Auto scroll to bottom
   useEffect(() => {
@@ -52,6 +67,7 @@ const ChatBox = ({ orderId }) => {
     if (!text.trim()) return;
     sendMutation.mutate(text);
   };
+
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: 400, background: "rgba(255,255,255,0.6)", borderRadius: 18, border: "1px solid rgba(255,255,255,0.4)", overflow: "hidden" }}>

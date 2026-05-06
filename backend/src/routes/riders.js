@@ -8,12 +8,18 @@ const {
   acceptOrder,
   updateOrderStatus,
   getEarnings,
+  getProfile,
+  updateAvailability,
 } = require("../controllers/riderController");
 
-router.get("/pending", protect, roleGuard("rider"), getPendingOrders);
-router.get("/deliveries", protect, roleGuard("rider"), getMyDeliveries);
-router.patch("/:id/accept", protect, roleGuard("rider"), acceptOrder);
-router.patch("/:id/status", protect, roleGuard("rider"), updateOrderStatus);
-router.get("/earnings", protect, roleGuard("rider"), getEarnings);
+router.use(protect, roleGuard("rider"));
+
+router.get("/profile",       getProfile);
+router.get("/pending",       getPendingOrders);
+router.get("/deliveries",    getMyDeliveries);
+router.get("/earnings",      getEarnings);
+router.patch("/availability", updateAvailability);
+router.patch("/:id/accept",  acceptOrder);
+router.patch("/:id/status",  updateOrderStatus);
 
 module.exports = router;

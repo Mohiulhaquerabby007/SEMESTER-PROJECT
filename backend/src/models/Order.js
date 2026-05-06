@@ -54,11 +54,16 @@ const orderSchema = new mongoose.Schema(
     },
     clientOrderId: {
       type: String,
-      default: null,
+      unique: true,
+      sparse: true,
     },
     notes: {
       type: String,
       default: "",
+    },
+    couponCode: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }

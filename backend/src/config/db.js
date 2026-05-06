@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
+const path = require("path");
+const fs   = require("fs");
 
 // Keep a reference so the in-memory server lives as long as the process
 let _memServer = null;
@@ -24,13 +26,27 @@ const connectDB = async () => {
     console.error(`MongoDB Error: ${error.message}`);
     console.log("Falling back to in-memory MongoDB…");
     try {
-      _memServer = await MongoMemoryServer.create();
+      // Use a persistent storage directory so data survives restarts
+      const persistDir = path.join(__dirname, "../../.mongo-persist");
+      if (!fs.existsSync(persistDir)) fs.mkdirSync(persistDir, { recursive: true });
+
+      _memServer = await MongoMemoryServer.create({
+        instance: { dbPath: persistDir, storageEngine: "wiredTiger" },
+      });
       const conn = await mongoose.connect(_memServer.getUri());
-      console.log(`Fallback MongoDB Connected: ${conn.connection.host}`);
+      console.log(`Fallback MongoDB Connected: ${conn.connection.host} (persistent)`);
       await autoSeedIfEmpty();
     } catch (fallbackError) {
-      console.error(`Fallback MongoDB Error: ${fallbackError.message}`);
-      process.exit(1);
+      // wiredTiger persistence not supported — fall back to plain in-memory
+      try {
+        _memServer = await MongoMemoryServer.create();
+        const conn = await mongoose.connect(_memServer.getUri());
+        console.log(`Fallback MongoDB Connected: ${conn.connection.host} (ephemeral)`);
+        await autoSeedIfEmpty();
+      } catch (finalError) {
+        console.error(`Fallback MongoDB Error: ${finalError.message}`);
+        process.exit(1);
+      }
     }
   }
 };
@@ -102,3 +118,4 @@ const autoSeedIfEmpty = async () => {
 };
 
 module.exports = connectDB;
+module.exports.autoSeedIfEmpty = autoSeedIfEmpty;

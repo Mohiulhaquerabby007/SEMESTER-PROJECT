@@ -9,6 +9,11 @@ const couponSchema = new mongoose.Schema(
       trim: true,
       uppercase: true,
     },
+    alias: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     discountType: {
       type: String,
       enum: ["percentage", "fixed"],

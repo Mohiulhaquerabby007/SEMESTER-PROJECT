@@ -30,7 +30,7 @@ const riderSchema = new mongoose.Schema(
     },
     vehicleType: {
       type: String,
-      enum: ["bike", "car", "van"],
+      enum: ["bicycle", "bike", "car", "van"],
       default: "bike",
     },
     isAvailable: {
@@ -56,6 +56,10 @@ const riderSchema = new mongoose.Schema(
     fcmToken: {
       type: String,
       default: null,
+    },
+    nidImage: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true }

@@ -1,5 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import api from "../services/api";
 
 const navConfig = {
   user: [
@@ -13,6 +15,7 @@ const navConfig = {
     { path: "/rider/pending",    icon: "inbox",          label: "Jobs" },
     { path: "/rider/deliveries", icon: "local_shipping", label: "Active", filled: true },
     { path: "/rider/earnings",   icon: "payments",       label: "Earnings" },
+    { path: "/rider/profile",    icon: "person",         label: "Profile" },
   ],
   admin: [
     { path: "/admin/dashboard", icon: "bar_chart",      label: "Overview" },
@@ -27,8 +30,17 @@ const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { data: notifications = [] } = useQuery({
+    queryKey: ["myNotifications"],
+    queryFn: () => api.get("/notifications/my").then((r) => Array.isArray(r.data) ? r.data : []),
+    refetchInterval: 30000,
+    enabled: !!user && user.accountType !== "admin",
+  });
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   if (!user) return null;
   const items = navConfig[user.accountType] || [];
+  const profilePath = user.accountType === "rider" ? "/rider/profile" : "/user/profile";
 
   return (
     /* Visible on mobile + tablet (< 1024px), hidden on desktop */
@@ -53,9 +65,24 @@ const BottomNav = () => {
                   fontSize: "22px",
                   transform: active ? "scale(1.1)" : "scale(1)",
                   transition: "transform 0.15s",
+                  position: "relative",
                 }}
               >
                 {item.icon}
+                {/* Unread badge on Profile tab */}
+                {item.path === profilePath && unreadCount > 0 && (
+                  <span style={{
+                    position: "absolute", top: -4, right: -6,
+                    minWidth: 14, height: 14, borderRadius: 7,
+                    background: "#dc2626", color: "#fff",
+                    fontSize: 8, fontWeight: 800,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    padding: "0 2px", border: "1.5px solid #fff",
+                    animation: "pulse 1.5s infinite",
+                  }}>
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </span>
               <span style={{ fontSize: "10px", fontWeight: active ? 700 : 500, lineHeight: 1 }}>
                 {item.label}

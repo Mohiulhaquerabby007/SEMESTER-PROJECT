@@ -73,6 +73,10 @@ exports.updateOrderStatus = async (req, res) => {
     order.status = status;
     await order.save();
 
+    // Emit real-time update to everyone watching this order
+    const io = req.app.get("io");
+    if (io) io.to(order._id.toString()).emit("order_status_update", { orderId: order._id, status });
+
     if (status === "delivered") {
       const riderEarning = Math.round(order.price * 0.8);
       await Rider.findByIdAndUpdate(req.user._id, {
@@ -94,6 +98,33 @@ exports.getEarnings = async (req, res) => {
       totalEarnings: rider.totalEarnings,
       completedDeliveries: rider.completedDeliveries,
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getProfile = async (req, res) => {
+  try {
+    const rider = await Rider.findById(req.user._id);
+    if (!rider) return res.status(404).json({ message: "Rider not found" });
+    res.json(rider);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateAvailability = async (req, res) => {
+  try {
+    const { isAvailable } = req.body;
+    if (typeof isAvailable !== "boolean") {
+      return res.status(400).json({ message: "isAvailable must be a boolean" });
+    }
+    const rider = await Rider.findByIdAndUpdate(
+      req.user._id,
+      { isAvailable },
+      { new: true }
+    );
+    res.json({ isAvailable: rider.isAvailable });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

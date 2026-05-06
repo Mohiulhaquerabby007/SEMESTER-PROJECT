@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../services/api";
+import socket from "../../services/socket";
 import StatusBadge from "../../components/StatusBadge";
 import DeliveryMap from "../../components/DeliveryMap";
 import ChatBox from "../../components/ChatBox";
@@ -15,6 +17,24 @@ const OrderDetails = () => {
     queryKey: ["order", id],
     queryFn: () => api.get(`/orders/${id}`).then((r) => r.data),
   });
+
+  useEffect(() => {
+    socket.emit("join_order_room", id);
+    
+    const handleStatusUpdate = (data) => {
+      if (data.orderId === id) {
+        toast("Order status updated!", { icon: "🔄" });
+        queryClient.invalidateQueries({ queryKey: ["order", id] });
+      }
+    };
+
+    socket.on("order_status_update", handleStatusUpdate);
+
+    return () => {
+      socket.off("order_status_update", handleStatusUpdate);
+    };
+  }, [id, queryClient]);
+
 
   const cancelMutation = useMutation({
     mutationFn: () => api.patch(`/orders/${id}/cancel`),

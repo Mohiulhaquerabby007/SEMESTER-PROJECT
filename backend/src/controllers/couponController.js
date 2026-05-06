@@ -2,7 +2,7 @@ const Coupon = require("../models/Coupon");
 
 exports.createCoupon = async (req, res) => {
   try {
-    const { code, discountType, discountValue, maxUses, expiryDate } = req.body;
+    const { code, alias, discountType, discountValue, maxUses, expiryDate } = req.body;
     
     const exists = await Coupon.findOne({ code: code.toUpperCase() });
     if (exists) {
@@ -11,6 +11,7 @@ exports.createCoupon = async (req, res) => {
 
     const coupon = await Coupon.create({
       code,
+      alias: alias || "",
       discountType,
       discountValue,
       maxUses,

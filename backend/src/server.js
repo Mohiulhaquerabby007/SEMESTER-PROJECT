@@ -1,136 +1,128 @@
 require("dotenv").config();
 const express = require("express");
+const http    = require("http");
+const { Server } = require("socket.io");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
-const authRoutes = require("./routes/auth");
-const orderRoutes = require("./routes/orders");
-const riderRoutes = require("./routes/riders");
-const adminRoutes = require("./routes/admin");
+const app    = express();
+const server = http.createServer(app);
 
-const app = express();
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://flexypay-82d33.web.app",
+      "https://flexypay-82d33.firebaseapp.com",
+      "https://flexypay-82d3382d33.web.app",
+      "https://flexypay-82d3382d33.firebaseapp.com"
+    ],
+    methods: ["GET","POST"],
+  },
+});
 
-// Initialize Firebase Admin (Wrapped in try/catch to prevent crashing if file is missing)
+// Make io accessible from controllers
+app.set("io", io);
+
+io.on("connection", (socket) => {
+  socket.on("join_order_room", (orderId) => {
+    socket.join(orderId);
+  });
+
+  socket.on("join_user_room", (userId) => {
+    socket.join(userId);
+  });
+
+  socket.on("send_message", async ({ orderId, senderId, senderModel, text }) => {
+    const msg = { orderId, senderId, senderModel, text, createdAt: new Date() };
+    io.to(orderId).emit("receive_message", msg);
+    try {
+      const Message = require("./models/Message");
+      await Message.create({ order: orderId, sender: senderId, senderModel, text });
+    } catch {}
+  });
+});
+
 try {
   const admin = require("firebase-admin");
   const serviceAccount = require("./config/firebase-service-account.json");
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
-  console.log("🔥 Firebase Admin initialized successfully");
-} catch (error) {
-  console.log("⚠️ Firebase Admin NOT initialized: Ensure backend/src/config/firebase-service-account.json exists");
+  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+  console.log("🔥 Firebase Admin initialized");
+} catch {
+  console.log("⚠️ Firebase Admin not initialized (service account missing)");
 }
 
-connectDB().then(async () => {
-  try {
-    const User = require("./models/User");
-    const Rider = require("./models/Rider");
-    const Order = require("./models/Order");
-    const Message = require("./models/Message");
-    
-    const count = await User.countDocuments();
-    if (count === 0) {
-      console.log("🌱 Auto-seeding empty database...");
-      await seedDatabase(User, Rider, Order, Message);
-      console.log("✅ Auto-seed complete!");
-    } else {
-      console.log(`✅ Database has ${count} users — skipping seed.`);
-    }
-  } catch (err) { console.error("Auto-seed error:", err.message); }
-});
+app.use(cors({
+  origin: [
+    "http://localhost:5174",
+    "https://flexypay-82d33.web.app",
+    "https://flexypay-82d33.firebaseapp.com",
+    "https://flexypay-82d3382d33.web.app",
+    "https://flexypay-82d3382d33.firebaseapp.com"
+  ],
+  credentials: true,
+}));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-async function seedDatabase(User, Rider, Order, Message) {
-  await Promise.all([User.deleteMany({}), Rider.deleteMany({}), Order.deleteMany({}), Message.deleteMany({})]);
+app.use("/api/auth",          require("./routes/auth"));
+app.use("/api/orders",        require("./routes/orders"));
+app.use("/api/riders",        require("./routes/riders"));
+app.use("/api/admin",         require("./routes/admin"));
+app.use("/api/chat",          require("./routes/chat"));
+app.use("/api/coupons",       require("./routes/coupon"));
+app.use("/api/notifications", require("./routes/notification"));
 
-  const USERS = [
-    { name: "Admin User",     email: "admin@quickdrop.com", phone: "01700000000", password: "admin1234", role: "admin",  address: "HQ Office, Motijheel, Dhaka" },
-    { name: "Mohiul Haque",   email: "mohiul@test.com",     phone: "01700000001", password: "test1234",  role: "user",   address: "Mirpur-10, Dhaka" },
-    { name: "Rahim Uddin",    email: "rahim@test.com",      phone: "01700000002", password: "test1234",  role: "user",   address: "Gulshan-2, Dhaka" },
-    { name: "Fatima Begum",   email: "fatima@test.com",     phone: "01700000003", password: "test1234",  role: "user",   address: "Dhanmondi-27, Dhaka" },
-    { name: "Kamal Hossain",  email: "kamal@test.com",      phone: "01700000004", password: "test1234",  role: "user",   address: "Uttara Sector-7, Dhaka" },
-    { name: "Nusrat Jahan",   email: "nusrat@test.com",     phone: "01700000005", password: "test1234",  role: "user",   address: "Banani, Dhaka" },
-  ];
-
-  const RIDERS = [
-    { name: "Rubel Ahmed",  email: "rubel@rider.com",  phone: "01800000001", password: "test1234", vehicleType: "bike", totalEarnings: 12400, completedDeliveries: 48 },
-    { name: "Jamal Sheikh", email: "jamal@rider.com",  phone: "01800000002", password: "test1234", vehicleType: "bike", totalEarnings: 9800,  completedDeliveries: 37 },
-    { name: "Mizan Rahman", email: "mizan@rider.com",  phone: "01800000003", password: "test1234", vehicleType: "car",  totalEarnings: 18200, completedDeliveries: 62 },
-    { name: "Sharif Ali",   email: "sharif@rider.com", phone: "01800000004", password: "test1234", vehicleType: "van",  totalEarnings: 7600,  completedDeliveries: 25 },
-    { name: "Hasan Kabir",  email: "hasan@rider.com",  phone: "01800000005", password: "test1234", vehicleType: "bike", totalEarnings: 5200,  completedDeliveries: 19 },
-  ];
-
-  const ADDRESSES = [
-    "Mirpur-10, Dhaka", "Gulshan-2, Dhaka", "Dhanmondi-27, Dhaka",
-    "Uttara Sector-7, Dhaka", "Motijheel, Dhaka", "Banani, Dhaka",
-    "Mohakhali, Dhaka", "Farmgate, Dhaka", "Badda, Dhaka", "Rampura, Dhaka",
-  ];
-
-  const users = await User.create(USERS);
-  const riders = await Rider.create(RIDERS);
-  const nonAdminUsers = users.filter((u) => u.role === "user");
-  const rawOrders = [];
-  const STATUSES = ["pending","accepted","picked_up","in_transit","delivered","delivered","delivered","cancelled"];
-  const PARCEL_TYPES = ["document","small","medium","large"];
-  const rand = (a) => a[Math.floor(Math.random() * a.length)];
-  const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-  for (let i = 0; i < 60; i++) {
-    const user = rand(nonAdminUsers);
-    const rider = rand(riders);
-    const status = rand(STATUSES);
-    const parcelType = rand(PARCEL_TYPES);
-    const distance = randInt(2, 25);
-    const weight = randInt(1, 12);
-    const wtCharge = { document: 0, small: 10, medium: 25, large: 50 }[parcelType];
-    const price = 60 + distance * 15 + wtCharge + Math.max(0, weight - 5) * 5;
-    const createdAt = new Date(Date.now() - randInt(0, 14) * 86400000);
-    rawOrders.push({
-      user: user._id, rider: ["pending","cancelled"].includes(status) ? null : rider._id,
-      pickupAddress: rand(ADDRESSES), pickupPhone: user.phone,
-      dropoffAddress: rand(ADDRESSES), dropoffPhone: `017${randInt(10000000, 99999999)}`,
-      parcelType, weight, distance, price, status,
-      clientOrderId: `seed_${i}_${Date.now()}`,
-      createdAt, updatedAt: createdAt,
-    });
-  }
-  await Order.collection.insertMany(rawOrders);
-}
-
-app.use(cors());
-app.use(express.json());
+app.get("/api/health", (req, res) => res.json({ status: "ok", timestamp: Date.now() }));
 
 app.get("/api/force-seed", async (req, res) => {
   try {
-    const User = require("./models/User");
+    const { autoSeedIfEmpty } = require("./config/db");
+    const User  = require("./models/User");
     const Rider = require("./models/Rider");
     const Order = require("./models/Order");
-    const Message = require("./models/Message");
-    await seedDatabase(User, Rider, Order, Message);
+    await Promise.all([User.deleteMany({}), Rider.deleteMany({}), Order.deleteMany({})]);
+    await autoSeedIfEmpty();
     res.json({ message: "✅ Force seed complete! 6 users, 5 riders, 60 orders created." });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: Date.now() });
-});
-
-app.use("/api/auth", authRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/riders", riderRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/chat", require("./routes/chat"));
-app.use("/api/coupons", require("./routes/coupon"));
-app.use("/api/notifications", require("./routes/notification"));
-
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Internal server error" });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`QuickDrop API running on port ${PORT}`);
+const dropLegacyIndexes = async () => {
+  const mongoose = require("mongoose");
+  const db = mongoose.connection.db;
+  if (!db) return;
+
+  const drops = [
+    { col: "users",  index: "phone_1",          label: "phone_1 unique index from users" },
+    { col: "orders", index: "clientOrderId_1",   label: "clientOrderId_1 non-sparse index from orders" },
+  ];
+
+  for (const { col, index, label } of drops) {
+    try {
+      const collection = db.collection(col);
+      const existing = await collection.indexes();
+      if (existing.find((i) => i.name === index)) {
+        await collection.dropIndex(index);
+        console.log(`✅ Dropped legacy ${label}`);
+      }
+    } catch (e) {
+      console.log(`ℹ️  No legacy ${label} to drop:`, e.message);
+    }
+  }
+};
+
+connectDB().then(async () => {
+  await dropLegacyIndexes();
+  const PORT = process.env.PORT || 5005;
+  server.listen(PORT, "0.0.0.0", () => console.log(`QuickDrop API + Socket.io running on port ${PORT}`));
 });

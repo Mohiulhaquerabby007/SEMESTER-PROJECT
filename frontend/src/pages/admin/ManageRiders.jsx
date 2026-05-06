@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "../../services/api";
 
-const vehicleIcon  = { bike: "🏍️", car: "🚗", van: "🚐" };
+const vehicleIcon  = { bicycle: "🚲", bike: "🏍️", car: "🚗", van: "🚐" };
 
 const ManageRiders = () => {
   const queryClient = useQueryClient();
@@ -11,6 +11,7 @@ const ManageRiders = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newRider, setNewRider] = useState({ name: "", email: "", phone: "", password: "", vehicleType: "bike" });
+  const [viewNidImage, setViewNidImage] = useState(null);
 
   const handleSearch = (v) => {
     setSearch(v);
@@ -143,7 +144,7 @@ const ManageRiders = () => {
                       </div>
                       <div style={{ position: "absolute", bottom: -4, right: -4, background: "#fff", borderRadius: "50%", padding: 2, display: "flex" }}>
                         <span style={{ fontSize: 14, background: "#f3f4f6", borderRadius: "50%", width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          {vehicleIcon[r.vehicleType]}
+                          {vehicleIcon[r.vehicleType] || "🚲"}
                         </span>
                       </div>
                     </div>
@@ -177,6 +178,20 @@ const ManageRiders = () => {
 
                 {/* Footer Action */}
                 <div style={{ background: "rgba(107,70,193,0.03)", padding: "12px 20px", borderTop: "1px solid rgba(255,255,255,0.4)", display: "flex", gap: 10 }}>
+                  {r.nidImage ? (
+                    <button onClick={() => setViewNidImage(r.nidImage)}
+                      style={{
+                        flex: 1, padding: "8px 0", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "1px solid #d0c0e4",
+                        background: "rgba(255,255,255,0.5)", color: "#6b46c1", transition: "background 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 4
+                      }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>badge</span> View NID
+                    </button>
+                  ) : (
+                    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ fontSize: 11, color: "#7a7484", fontWeight: 600 }}>No NID Provided</span>
+                    </div>
+                  )}
+
                   <button onClick={() => blockMutation.mutate(r._id)} disabled={blockMutation.isPending}
                     style={{
                       flex: 1, padding: "8px 0", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none",
@@ -189,7 +204,7 @@ const ManageRiders = () => {
                   
                   <button onClick={() => { if(window.confirm("Delete this rider?")) deleteMutation.mutate(r._id); }} disabled={deleteMutation.isPending}
                     style={{
-                      width: 36, height: 36, borderRadius: 8, cursor: "pointer", border: "none",
+                      width: 36, height: 36, borderRadius: 8, cursor: "pointer", border: "none", flexShrink: 0,
                       background: "rgba(220,38,38,0.1)", color: "#dc2626", display: "flex", alignItems: "center", justifyContent: "center",
                       transition: "all 0.2s"
                     }}
@@ -240,7 +255,8 @@ const ManageRiders = () => {
               <div>
                 <label style={{ fontSize: 11, fontWeight: 700, color: "#6b46c1", textTransform: "uppercase", display: "block", marginBottom: 6 }}>Vehicle Type</label>
                 <select value={newRider.vehicleType} onChange={e => setNewRider({...newRider, vehicleType: e.target.value})} style={{ width: "100%", padding: "10px", borderRadius: 8, border: "1px solid #cbc3d5" }}>
-                  <option value="bike">Bike 🏍️</option>
+                  <option value="bicycle">Bi-cycle 🚲</option>
+                  <option value="bike">Motorbike 🏍️</option>
                   <option value="car">Car 🚗</option>
                   <option value="van">Van 🚐</option>
                 </select>
@@ -253,6 +269,26 @@ const ManageRiders = () => {
           </div>
         </div>
       )}
+
+      {/* View NID Modal */}
+      {viewNidImage && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20
+        }} onClick={() => setViewNidImage(null)}>
+          <div className="animate-slide-up" style={{ position: "relative", maxWidth: 600, width: "100%" }} onClick={e => e.stopPropagation()}>
+            <button onClick={() => setViewNidImage(null)}
+              style={{
+                position: "absolute", top: -40, right: 0, background: "rgba(255,255,255,0.2)", color: "#fff",
+                border: "none", borderRadius: "50%", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer"
+              }}>
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <img src={viewNidImage} alt="NID Card" style={{ width: "100%", borderRadius: 16, boxShadow: "0 24px 60px rgba(0,0,0,0.4)" }} />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

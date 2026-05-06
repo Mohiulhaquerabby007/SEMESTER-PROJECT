@@ -1,10 +1,19 @@
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../../services/api";
 import { saveOrderLocally, getNetworkStatus } from "../../services/syncService";
 import DeliveryMap from "../../components/DeliveryMap";
+
+const calcDiscountedPrice = (price, coupon) => {
+  if (!coupon) return price;
+  if (coupon.discountType === "percentage") {
+    return Math.max(0, Math.round(price - price * (coupon.discountValue / 100)));
+  }
+  return Math.max(0, Math.round(price - coupon.discountValue));
+};
 
 const TYPES = [
   { value: "document", label: "Document", icon: "description" },
@@ -57,8 +66,14 @@ const BookParcel = () => {
   const [step, setStep] = useState(1);
   const [price, setPrice] = useState(null);
   const [isCalculatingLoc, setIsCalculatingLoc] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const { user } = useAuth();
   const [form, setForm] = useState({
-    pickupAddress: "", pickupPhone: "", dropoffAddress: "", dropoffPhone: "",
+    pickupAddress: user?.address || "", 
+    pickupPhone: user?.phone?.startsWith("google_") ? "" : (user?.phone || ""), 
+    dropoffAddress: "", 
+    dropoffPhone: "",
     parcelType: "small", weight: "", distance: "", notes: "",
   });
 
@@ -67,12 +82,21 @@ const BookParcel = () => {
 
   const priceMutation = useMutation({
     mutationFn: (d) => api.post("/orders/price", d),
-    onSuccess: (r) => { setPrice(r.data.price); setStep(3); },
+    onSuccess: (r) => { setPrice(r.data.price); setAppliedCoupon(null); setCouponCode(""); setStep(3); },
     onError: () => {
       const wt = { document: 0, small: 10, medium: 25, large: 50 };
       setPrice(Math.round(60 + +form.distance * 15 + (wt[form.parcelType] || 0)));
-      setStep(3);
+      setAppliedCoupon(null); setCouponCode(""); setStep(3);
     },
+  });
+
+  const couponMutation = useMutation({
+    mutationFn: (code) => api.post("/coupons/validate", { code }),
+    onSuccess: (r) => {
+      setAppliedCoupon(r.data);
+      toast.success(`Coupon applied! Saving ${r.data.discountType === "percentage" ? r.data.discountValue + "%" : "৳" + r.data.discountValue}`, { icon: "🎉" });
+    },
+    onError: (e) => toast.error(e.response?.data?.message || "Invalid coupon"),
   });
 
   const orderMutation = useMutation({
@@ -87,6 +111,9 @@ const BookParcel = () => {
     },
     onError: (e) => toast.error(e.response?.data?.message || "Failed"),
   });
+
+  const finalPrice = calcDiscountedPrice(price, appliedCoupon);
+  const savings    = price != null ? price - finalPrice : 0;
 
   const stepLabels = ["Addresses", "Details", "Confirm"];
 
@@ -310,7 +337,67 @@ const BookParcel = () => {
               border: "1px solid rgba(107,70,193,0.15)" }}>
               <p style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase",
                 letterSpacing: "0.08em" }}>Estimated Price</p>
-              <p style={{ fontSize: "3rem", fontWeight: 800, color: "#6b46c1", lineHeight: 1.1 }}>৳{price}</p>
+              {appliedCoupon ? (
+                <>
+                  <p style={{ fontSize: "1.6rem", fontWeight: 700, color: "#9c85cc", lineHeight: 1,
+                    textDecoration: "line-through", marginTop: 6 }}>৳{price}</p>
+                  <p style={{ fontSize: "3rem", fontWeight: 800, color: "#15803D", lineHeight: 1.1 }}>৳{finalPrice}</p>
+                  <span style={{ display: "inline-block", marginTop: 6, padding: "3px 12px",
+                    borderRadius: 999, fontSize: 11, fontWeight: 700,
+                    background: "rgba(21,128,61,0.12)", color: "#15803D" }}>
+                    You save ৳{savings}!
+                  </span>
+                </>
+              ) : (
+                <p style={{ fontSize: "3rem", fontWeight: 800, color: "#6b46c1", lineHeight: 1.1 }}>৳{price}</p>
+              )}
+            </div>
+
+            {/* ── Coupon input ── */}
+            <div style={{ borderRadius: 12, border: "1px dashed #cbc3d5", padding: "14px 16px",
+              background: appliedCoupon ? "rgba(21,128,61,0.05)" : "rgba(255,255,255,0.4)" }}>
+              {appliedCoupon ? (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span className="material-symbols-outlined filled" style={{ fontSize: 22, color: "#15803D" }}>check_circle</span>
+                    <div>
+                      <p style={{ fontWeight: 700, color: "#15803D", fontSize: 13 }}>Coupon applied: {appliedCoupon.code}</p>
+                      <p style={{ fontSize: 11, color: "#7a7484" }}>
+                        {appliedCoupon.discountType === "percentage"
+                          ? `${appliedCoupon.discountValue}% off`
+                          : `৳${appliedCoupon.discountValue} flat discount`}
+                      </p>
+                    </div>
+                  </div>
+                  <button onClick={() => { setAppliedCoupon(null); setCouponCode(""); }}
+                    style={{ background: "none", border: "none", color: "#7a7484", cursor: "pointer",
+                      fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15 }}>close</span>
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase",
+                    letterSpacing: "0.06em", marginBottom: 8 }}>Have a coupon code?</p>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <input
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      placeholder="Enter code e.g. SAVE20"
+                      style={{ flex: 1, fontSize: 13, fontWeight: 600, letterSpacing: "0.05em",
+                        textTransform: "uppercase" }}
+                    />
+                    <button
+                      onClick={() => { if (couponCode.trim()) couponMutation.mutate(couponCode.trim()); }}
+                      disabled={!couponCode.trim() || couponMutation.isPending}
+                      className="btn-primary"
+                      style={{ padding: "0 16px", flexShrink: 0, opacity: !couponCode.trim() ? 0.5 : 1 }}>
+                      {couponMutation.isPending ? "…" : "Apply"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Route map */}
@@ -341,7 +428,13 @@ const BookParcel = () => {
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               <button onClick={() => setStep(2)} className="btn-outline" style={{ flex: "1 1 120px" }}>Back</button>
-              <button id="confirm-booking" onClick={() => orderMutation.mutate({ ...form, weight: +form.weight, distance: +form.distance })}
+              <button id="confirm-booking" onClick={() => orderMutation.mutate({
+                  ...form,
+                  weight: +form.weight,
+                  distance: +form.distance,
+                  price: finalPrice,
+                  couponCode: appliedCoupon?.code || null,
+                })}
                 disabled={orderMutation.isPending}
                 style={{
                   flex: "2 1 160px", padding: "12px", borderRadius: 8, border: "none",
@@ -350,7 +443,7 @@ const BookParcel = () => {
                   boxShadow: "0 4px 14px rgba(26,122,60,0.28)", opacity: orderMutation.isPending ? 0.6 : 1,
                 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>check_circle</span>
-                {orderMutation.isPending ? "Booking…" : "Confirm Booking"}
+                {orderMutation.isPending ? "Booking…" : `Confirm Booking · ৳${finalPrice}`}
               </button>
             </div>
           </div>

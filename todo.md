@@ -9,9 +9,9 @@ To complete the push notification setup, please follow these remaining steps:
 - Add an Android App to your Firebase project using your app's package name (found in `frontend/android/app/build.gradle`).
 
 ## 2. Frontend Configuration (Android)
-- [ ] Download the `google-services.json` file from your Firebase Android App settings.
-- [ ] Place the downloaded `google-services.json` file inside the `frontend/android/app/` directory.
-- [ ] Re-run `npx cap sync android` just to be safe.
+- [x] Download the `google-services.json` file from your Firebase Android App settings.
+- [x] Place the downloaded `google-services.json` file inside the `frontend/android/app/` directory.
+- [x] Re-run `npx cap sync android` just to be safe.
 
 ## 3. Backend Configuration (Node.js)
 - [ ] Go to your Firebase Console -> Project Settings -> Service Accounts.

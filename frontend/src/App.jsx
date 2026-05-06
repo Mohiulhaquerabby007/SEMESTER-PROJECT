@@ -4,6 +4,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
 import BottomNav from "./components/BottomNav";
 import NetworkBadge from "./components/NetworkBadge";
+import NotificationManager from "./components/NotificationManager";
+import Header from "./components/Header";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -16,6 +18,7 @@ import RiderDashboard from "./pages/rider/Dashboard";
 import PendingOrders from "./pages/rider/PendingOrders";
 import MyDeliveries from "./pages/rider/MyDeliveries";
 import Earnings from "./pages/rider/Earnings";
+import RiderProfile from "./pages/rider/Profile";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminOrders from "./pages/admin/Orders";
 import ManageUsers from "./pages/admin/ManageUsers";
@@ -57,6 +60,7 @@ const App = () => {
     /* app-shell = flex row; sidebar is sticky column; content fills rest */
     <div className="app-shell">
       <NetworkBadge />
+      <NotificationManager />
 
       {/* ── Sidebar (desktop only, via CSS .app-sidebar) ── */}
       {loggedIn && (
@@ -67,20 +71,7 @@ const App = () => {
 
       {/* ── Main content column ── */}
       <div className="app-content">
-
-        {/* Mobile / tablet top bar */}
-        {loggedIn && (
-          <header className="glass-header flex items-center justify-between px-4 sm:px-5 lg:hidden"
-            style={{ height: 56, position: "sticky", top: 0, zIndex: 30 }}>
-            <span style={{ fontSize: "1.1rem", fontWeight: 800, color: "#6b46c1", letterSpacing: "-0.02em" }}>
-              QuickDrop
-            </span>
-            <span style={{ fontSize: "11px", fontWeight: 700, padding: "3px 10px", borderRadius: 999,
-              background: "rgba(107,70,193,0.1)", color: "#6b46c1", textTransform: "capitalize" }}>
-              {user?.accountType}
-            </span>
-          </header>
-        )}
+        {loggedIn && <Header />}
 
         {/* Page content */}
         <main style={{ flex: 1, paddingBottom: loggedIn ? "72px" : 0 }} className="lg:!pb-0">
@@ -99,6 +90,7 @@ const App = () => {
             <Route path="/rider/pending"    element={<ProtectedRoute allowedTypes={["rider"]}><PendingOrders /></ProtectedRoute>} />
             <Route path="/rider/deliveries" element={<ProtectedRoute allowedTypes={["rider"]}><MyDeliveries /></ProtectedRoute>} />
             <Route path="/rider/earnings"   element={<ProtectedRoute allowedTypes={["rider"]}><Earnings /></ProtectedRoute>} />
+            <Route path="/rider/profile"    element={<ProtectedRoute allowedTypes={["rider"]}><RiderProfile /></ProtectedRoute>} />
 
             <Route path="/admin/dashboard" element={<ProtectedRoute allowedTypes={["admin"]}><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/orders"    element={<ProtectedRoute allowedTypes={["admin"]}><AdminOrders /></ProtectedRoute>} />

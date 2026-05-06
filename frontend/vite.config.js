@@ -6,9 +6,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: 3000,
+    strictPort: true,   // never silently switch to 3001 — fail loudly if 3000 is taken
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:5000",
+        target: "http://localhost:5005",
         changeOrigin: true,
       },
     },

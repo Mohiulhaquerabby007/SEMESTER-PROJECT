@@ -4,42 +4,33 @@ const Rider = require("../models/Rider");
 
 const protect = async (req, res, next) => {
   try {
-    let token;
-
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Not authorized" });
     }
 
-    if (!token) {
-      return res.status(401).json({ message: "Not authorized, no token" });
-    }
-
+    const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    let account = await User.findById(decoded.id);
-    let accountType = "user";
+    let account;
+    let accountType;
 
-    if (!account) {
+    if (decoded.role === "rider") {
       account = await Rider.findById(decoded.id);
       accountType = "rider";
+    } else {
+      account = await User.findById(decoded.id);
+      accountType = decoded.role || "user";
     }
 
-    if (!account) {
-      return res.status(401).json({ message: "Account not found" });
-    }
-
-    if (account.isBlocked) {
-      return res.status(403).json({ message: "Account is blocked" });
-    }
+    if (!account) return res.status(401).json({ message: "Not authorized" });
+    if (account.isBlocked) return res.status(403).json({ message: "Account blocked" });
 
     req.user = account;
     req.accountType = accountType;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Not authorized, token failed" });
+    return res.status(401).json({ message: "Not authorized" });
   }
 };
 
