@@ -18,17 +18,17 @@ const USERS = [
 ];
 
 const RIDERS = [
-  { name: "Rubel Ahmed",  email: "rubel@rider.com",  phone: "01800000001", password: "test1234", vehicleType: "bike", totalEarnings: 12400, completedDeliveries: 48 },
-  { name: "Jamal Sheikh", email: "jamal@rider.com",  phone: "01800000002", password: "test1234", vehicleType: "bike", totalEarnings: 9800,  completedDeliveries: 37 },
-  { name: "Mizan Rahman", email: "mizan@rider.com",  phone: "01800000003", password: "test1234", vehicleType: "car",  totalEarnings: 18200, completedDeliveries: 62 },
-  { name: "Sharif Ali",   email: "sharif@rider.com", phone: "01800000004", password: "test1234", vehicleType: "van",  totalEarnings: 7600,  completedDeliveries: 25 },
-  { name: "Hasan Kabir",  email: "hasan@rider.com",  phone: "01800000005", password: "test1234", vehicleType: "bike", totalEarnings: 5200,  completedDeliveries: 19 },
+  { name: "Rubel Ahmed",  email: "rubel@rider.com",  phone: "01800000001", password: "test1234", vehicleType: "motorcycle", totalEarnings: 12400, completedDeliveries: 48 },
+  { name: "Jamal Sheikh", email: "jamal@rider.com",  phone: "01800000002", password: "test1234", vehicleType: "motorcycle", totalEarnings: 9800,  completedDeliveries: 37 },
+  { name: "Mizan Rahman", email: "mizan@rider.com",  phone: "01800000003", password: "test1234", vehicleType: "car",        totalEarnings: 18200, completedDeliveries: 62 },
+  { name: "Sharif Ali",   email: "sharif@rider.com", phone: "01800000004", password: "test1234", vehicleType: "car",        totalEarnings: 7600,  completedDeliveries: 25 },
+  { name: "Hasan Kabir",  email: "hasan@rider.com",  phone: "01800000005", password: "test1234", vehicleType: "bicycle",    totalEarnings: 5200,  completedDeliveries: 19 },
 ];
 
 const COUPONS = [
-  { code: "WELCOME50", discountType: "percentage", discountValue: 50, maxUses: 100, expiryDate: new Date(Date.now() + 30 * 86400000) },
-  { code: "FLAT100", discountType: "fixed", discountValue: 100, maxUses: 50, expiryDate: new Date(Date.now() + 15 * 86400000) },
-  { code: "FESTIVAL20", discountType: "percentage", discountValue: 20, maxUses: 200, expiryDate: new Date(Date.now() + 7 * 86400000) }
+  { code: "WELCOME50",  alias: "Welcome Discount",  discountType: "percentage", discountValue: 50,  maxUses: 100, expiryDate: new Date(Date.now() + 30 * 86400000) },
+  { code: "FLAT100",    alias: "Flat ৳100 Off",      discountType: "fixed",      discountValue: 100, maxUses: 50,  expiryDate: new Date(Date.now() + 15 * 86400000) },
+  { code: "FESTIVAL20", alias: "Festival Special",   discountType: "percentage", discountValue: 20,  maxUses: 200, expiryDate: new Date(Date.now() + 7 * 86400000) },
 ];
 
 const ADDRESSES = [

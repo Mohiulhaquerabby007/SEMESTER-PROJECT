@@ -35,13 +35,13 @@ const EMPTY = { code: "", alias: "", discountType: "percentage", discountValue: 
 /* ── Status badge ─────────────────────────────────────────────────── */
 const StatusPill = ({ coupon }) => {
   if (isExpired(coupon)) {
-    return <span style={{ padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(185,28,28,0.1)", color: "#B91C1C" }}>Expired</span>;
+    return <span style={{ padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(239,68,68,0.15)", color: "#ef4444" }}>Expired</span>;
   }
   const full = coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses;
   if (full) {
-    return <span style={{ padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(100,100,100,0.12)", color: "#555" }}>Used Up</span>;
+    return <span style={{ padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(255,255,255,0.06)", color: "var(--color-on-surface-variant)" }}>Used Up</span>;
   }
-  return <span style={{ padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(21,128,61,0.1)", color: "#15803D" }}>Active</span>;
+  return <span style={{ padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(16,185,129,0.15)", color: "var(--color-success)" }}>Active</span>;
 };
 
 /* ═══════════════════════════════════════════════════════════════════ */
@@ -96,8 +96,8 @@ const ManageCoupons = () => {
       {/* ── Header ── */}
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#181c1e" }}>Manage Coupons</h1>
-          <p style={{ fontSize: 13, color: "#7a7484", marginTop: 2 }}>
+          <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--color-on-surface)" }}>Manage Coupons</h1>
+          <p style={{ fontSize: 13, color: "var(--color-on-surface-variant)", marginTop: 2 }}>
             {active.length} active · {expired.length} expired
           </p>
         </div>
@@ -110,9 +110,9 @@ const ManageCoupons = () => {
       {/* ── Stats row ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 20 }}>
         {[
-          { icon: "local_offer",  label: "Total",   value: coupons.length,  color: "#6b46c1" },
-          { icon: "check_circle", label: "Active",  value: active.length,   color: "#15803D" },
-          { icon: "schedule",     label: "Expired", value: expired.length,  color: "#B91C1C" },
+          { icon: "local_offer",  label: "Total",   value: coupons.length,  color: "var(--color-primary-container)" },
+          { icon: "check_circle", label: "Active",  value: active.length,   color: "var(--color-success)" },
+          { icon: "schedule",     label: "Expired", value: expired.length,  color: "#ef4444" },
         ].map((s) => (
           <div key={s.label} className="glass-panel" style={{ borderRadius: 14, padding: "14px 16px", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: `${s.color}18`,
@@ -120,8 +120,8 @@ const ManageCoupons = () => {
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: s.color }}>{s.icon}</span>
             </div>
             <div>
-              <p style={{ fontSize: "1.3rem", fontWeight: 800, color: "#181c1e", lineHeight: 1 }}>{s.value}</p>
-              <p style={{ fontSize: 11, color: "#7a7484", marginTop: 2 }}>{s.label}</p>
+              <p style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--color-on-surface)", lineHeight: 1 }}>{s.value}</p>
+              <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", marginTop: 2 }}>{s.label}</p>
             </div>
           </div>
         ))}
@@ -130,13 +130,13 @@ const ManageCoupons = () => {
       {/* ── Coupon cards ── */}
       {isLoading ? (
         <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
-          <div className="animate-spin" style={{ width: 32, height: 32, borderRadius: "50%", border: "3px solid #d0c0e4", borderTopColor: "#6b46c1" }} />
+          <div className="animate-spin" style={{ width: 32, height: 32, borderRadius: "50%", border: "3px solid var(--color-outline)", borderTopColor: "var(--color-primary)" }} />
         </div>
       ) : coupons.length === 0 ? (
         <div className="glass-panel" style={{ borderRadius: 18, textAlign: "center", padding: "60px 20px" }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 48, color: "#cbc3d5" }}>local_offer</span>
-          <p style={{ marginTop: 12, fontWeight: 700, color: "#181c1e", fontSize: "1.1rem" }}>No coupons yet</p>
-          <p style={{ fontSize: 13, color: "#7a7484", marginTop: 4, marginBottom: 20 }}>Create your first discount code above</p>
+          <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-outline-variant)" }}>local_offer</span>
+          <p style={{ marginTop: 12, fontWeight: 700, color: "var(--color-on-surface)", fontSize: "1.1rem" }}>No coupons yet</p>
+          <p style={{ fontSize: 13, color: "var(--color-on-surface-variant)", marginTop: 4, marginBottom: 20 }}>Create your first discount code above</p>
           <button onClick={() => setShowModal(true)} className="btn-primary">
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>add_circle</span>
             Create Coupon
@@ -151,7 +151,7 @@ const ManageCoupons = () => {
               <div key={c._id} className="glass-panel" style={{
                 borderRadius: 16, padding: "16px 20px",
                 opacity: expired ? 0.7 : 1,
-                borderLeft: `4px solid ${expired ? "#B91C1C" : "#6b46c1"}`,
+                borderLeft: `4px solid ${expired ? "#ef4444" : "var(--color-primary)"}`,
               }}>
                 {/* Row 1: code + status + delete */}
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
@@ -163,24 +163,24 @@ const ManageCoupons = () => {
                       style={{
                         display: "flex", alignItems: "center", gap: 6,
                         padding: "6px 14px", borderRadius: 8, border: "none",
-                        background: "rgba(107,70,193,0.12)", cursor: "pointer",
+                        background: "rgba(139,92,246,0.15)", cursor: "pointer",
                         transition: "background 0.2s",
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = "rgba(107,70,193,0.22)"}
-                      onMouseLeave={e => e.currentTarget.style.background = "rgba(107,70,193,0.12)"}
+                      onMouseEnter={e => e.currentTarget.style.background = "rgba(139,92,246,0.25)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "rgba(139,92,246,0.15)"}
                     >
-                      <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "0.06em", color: "#6b46c1" }}>
+                      <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: "0.06em", color: "var(--color-primary-container)" }}>
                         {c.code}
                       </span>
-                      <span className="material-symbols-outlined" style={{ fontSize: 14, color: "#6b46c1" }}>content_copy</span>
+                      <span className="material-symbols-outlined" style={{ fontSize: 14, color: "var(--color-primary-container)" }}>content_copy</span>
                     </button>
 
                     {/* Alias badge */}
                     {c.alias && (
                       <span style={{
-                        fontSize: 11, fontWeight: 600, color: "#7a7484",
+                        fontSize: 11, fontWeight: 600, color: "var(--color-on-surface-variant)",
                         padding: "4px 10px", borderRadius: 999,
-                        background: "rgba(0,0,0,0.05)", border: "1px solid rgba(0,0,0,0.06)",
+                        background: "rgba(255,255,255,0.06)", border: "1px solid var(--color-outline)",
                       }}>
                         {c.alias}
                       </span>
@@ -192,12 +192,12 @@ const ManageCoupons = () => {
                     <button
                       onClick={() => { if (window.confirm("Delete this coupon?")) deleteMutation.mutate(c._id); }}
                       disabled={deleteMutation.isPending}
-                      style={{ background: "rgba(185,28,28,0.08)", border: "none", color: "#B91C1C",
+                      style={{ background: "rgba(239, 68, 68, 0.15)", border: "none", color: "#ef4444",
                         width: 32, height: 32, borderRadius: 8, cursor: "pointer",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         transition: "background 0.2s" }}
-                      onMouseEnter={e => e.currentTarget.style.background = "rgba(185,28,28,0.18)"}
-                      onMouseLeave={e => e.currentTarget.style.background = "rgba(185,28,28,0.08)"}
+                      onMouseEnter={e => e.currentTarget.style.background = "rgba(239, 68, 68, 0.25)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "rgba(239, 68, 68, 0.15)"}
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
                     </button>
@@ -207,18 +207,18 @@ const ManageCoupons = () => {
                 {/* Row 2: discount + uses + expiry */}
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 20px", marginBottom: 10 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "#15803D" }}>sell</span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#15803D" }}>{fmtDiscount(c)} discount</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "var(--color-success)" }}>sell</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-success)" }}>{fmtDiscount(c)} discount</span>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "#7a7484" }}>repeat</span>
-                    <span style={{ fontSize: 13, color: "#494453" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "var(--color-on-surface-variant)" }}>repeat</span>
+                    <span style={{ fontSize: 13, color: "var(--color-on-surface-variant)" }}>
                       {c.usedCount} / {c.maxUses === 0 ? "∞" : c.maxUses} uses
                     </span>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "#7a7484" }}>calendar_today</span>
-                    <span style={{ fontSize: 13, color: "#494453" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "var(--color-on-surface-variant)" }}>calendar_today</span>
+                    <span style={{ fontSize: 13, color: "var(--color-on-surface-variant)" }}>
                       Expires {new Date(c.expiryDate).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                     </span>
                   </div>
@@ -227,15 +227,15 @@ const ManageCoupons = () => {
                 {/* Usage progress bar */}
                 {c.maxUses > 0 && (
                   <div>
-                    <div style={{ height: 4, borderRadius: 4, background: "rgba(0,0,0,0.07)", overflow: "hidden" }}>
+                    <div style={{ height: 4, borderRadius: 4, background: "rgba(0,0,0,0.2)", overflow: "hidden" }}>
                       <div style={{
                         height: "100%", borderRadius: 4,
                         width: `${Math.min(ratio * 100, 100)}%`,
-                        background: ratio >= 1 ? "#B91C1C" : ratio > 0.7 ? "#B45309" : "#6b46c1",
+                        background: ratio >= 1 ? "#ef4444" : ratio > 0.7 ? "#f59e0b" : "var(--color-primary)",
                         transition: "width 0.4s ease",
                       }} />
                     </div>
-                    <p style={{ fontSize: 10, color: "#7a7484", marginTop: 3 }}>
+                    <p style={{ fontSize: 10, color: "var(--color-on-surface-variant)", marginTop: 3 }}>
                       {Math.round(ratio * 100)}% of quota used
                     </p>
                   </div>
@@ -246,7 +246,7 @@ const ManageCoupons = () => {
         </div>
       )}
 
-      {/* ═══ Create Coupon Modal ═══ */}
+      {/* ──═ Create Coupon Modal ═══ */}
       {showModal && (
         <div style={{
           position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)",
@@ -272,23 +272,23 @@ const ManageCoupons = () => {
             {/* Modal header */}
             <div style={{
               padding: "20px 24px 16px",
-              background: "linear-gradient(135deg, rgba(107,70,193,0.12), rgba(83,42,168,0.03))",
-              borderBottom: "1px solid rgba(255,255,255,0.4)",
+              background: "rgba(0,0,0,0.15)",
+              borderBottom: "1px solid var(--color-outline)",
               display: "flex", justifyContent: "space-between", alignItems: "center",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#6b46c1,#532aa8)",
+                <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#8b5cf6,#3b82f6)",
                   display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#fff" }}>local_offer</span>
                 </div>
                 <div>
-                  <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#181c1e" }}>New Coupon</h2>
-                  <p style={{ fontSize: 11, color: "#7a7484" }}>Set up a discount code for your users</p>
+                  <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--color-on-surface)" }}>New Coupon</h2>
+                  <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)" }}>Set up a discount code for your users</p>
                 </div>
               </div>
               <button onClick={() => setShowModal(false)}
-                style={{ background: "rgba(255,255,255,0.5)", border: "none", width: 32, height: 32, borderRadius: "50%",
-                  cursor: "pointer", color: "#494453", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                style={{ background: "rgba(255,255,255,0.06)", border: "none", width: 32, height: 32, borderRadius: "50%",
+                  cursor: "pointer", color: "var(--color-on-surface-variant)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
               </button>
             </div>
@@ -299,7 +299,7 @@ const ManageCoupons = () => {
 
                 {/* ── Coupon Code ── */}
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "var(--color-on-surface-variant)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>
                     Coupon Code *
                   </label>
                   <div style={{ display: "flex", gap: 8 }}>
@@ -314,20 +314,20 @@ const ManageCoupons = () => {
                       onClick={() => setForm({ ...form, code: generateCode() })}
                       title="Auto-generate code"
                       style={{
-                        padding: "0 14px", borderRadius: 8, border: "1.5px solid #cbc3d5",
-                        background: "rgba(107,70,193,0.08)", color: "#6b46c1", cursor: "pointer",
+                        padding: "0 14px", borderRadius: 8, border: "1.5px solid var(--color-outline-variant)",
+                        background: "rgba(139,92,246,0.15)", color: "var(--color-primary-container)", cursor: "pointer",
                         fontWeight: 700, fontSize: 12, display: "flex", alignItems: "center", gap: 5,
                         flexShrink: 0, transition: "all 0.2s", whiteSpace: "nowrap",
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = "rgba(107,70,193,0.18)"}
-                      onMouseLeave={e => e.currentTarget.style.background = "rgba(107,70,193,0.08)"}
+                      onMouseEnter={e => e.currentTarget.style.background = "rgba(139,92,246,0.25)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "rgba(139,92,246,0.15)"}
                     >
                       <span className="material-symbols-outlined" style={{ fontSize: 16 }}>auto_awesome</span>
                       Generate
                     </button>
                   </div>
                   {form.code && (
-                    <p style={{ fontSize: 11, color: "#7a7484", marginTop: 5, display: "flex", alignItems: "center", gap: 4 }}>
+                    <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", marginTop: 5, display: "flex", alignItems: "center", gap: 4 }}>
                       <span className="material-symbols-outlined" style={{ fontSize: 13 }}>info</span>
                       Users enter this code at checkout
                     </p>
@@ -336,7 +336,7 @@ const ManageCoupons = () => {
 
                 {/* ── Alias (friendly name) ── */}
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "var(--color-on-surface-variant)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>
                     Alias / Campaign Name
                     <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, marginLeft: 6 }}>(optional)</span>
                   </label>
@@ -349,7 +349,7 @@ const ManageCoupons = () => {
 
                 {/* ── Quick presets ── */}
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 8 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "var(--color-on-surface-variant)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 8 }}>
                     Quick Presets
                   </label>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -359,9 +359,9 @@ const ManageCoupons = () => {
                         <button key={p.label} type="button" onClick={() => applyPreset(p)}
                           style={{
                             padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600,
-                            border: active ? "none" : "1.5px solid #cbc3d5",
-                            background: active ? "#6b46c1" : "transparent",
-                            color: active ? "#fff" : "#494453",
+                            border: active ? "none" : "1.5px solid var(--color-outline-variant)",
+                            background: active ? "var(--color-primary)" : "transparent",
+                            color: active ? "#fff" : "var(--color-on-surface-variant)",
                             cursor: "pointer", transition: "all 0.15s",
                           }}>
                           {p.label}
@@ -374,7 +374,7 @@ const ManageCoupons = () => {
                 {/* ── Discount type + value ── */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   <div>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>Type *</label>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "var(--color-on-surface-variant)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>Type *</label>
                     <select value={form.discountType} onChange={(e) => setForm({ ...form, discountType: e.target.value })}
                       style={{ width: "100%" }}>
                       <option value="percentage">Percentage (%)</option>
@@ -382,11 +382,11 @@ const ManageCoupons = () => {
                     </select>
                   </div>
                   <div>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>Value *</label>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "var(--color-on-surface-variant)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>Value *</label>
                     <div style={{ position: "relative" }}>
                       <span style={{
                         position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
-                        fontSize: 14, fontWeight: 700, color: "#6b46c1",
+                        fontSize: 14, fontWeight: 700, color: "var(--color-primary-container)",
                       }}>
                         {form.discountType === "percentage" ? "%" : "৳"}
                       </span>
@@ -403,7 +403,7 @@ const ManageCoupons = () => {
                 {/* ── Max uses + expiry ── */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   <div>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "var(--color-on-surface-variant)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>
                       Max Uses
                       <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0, marginLeft: 4 }}>(0 = ∞)</span>
                     </label>
@@ -411,7 +411,7 @@ const ManageCoupons = () => {
                       onChange={(e) => setForm({ ...form, maxUses: e.target.value })} />
                   </div>
                   <div>
-                    <label style={{ fontSize: 11, fontWeight: 700, color: "#7a7484", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>Expiry Date *</label>
+                    <label style={{ fontSize: 11, fontWeight: 700, color: "var(--color-on-surface-variant)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 6 }}>Expiry Date *</label>
                     <input required type="date" value={form.expiryDate}
                       min={new Date().toISOString().split("T")[0]}
                       onChange={(e) => setForm({ ...form, expiryDate: e.target.value })}
@@ -423,15 +423,15 @@ const ManageCoupons = () => {
                 {form.code && form.discountValue && (
                   <div style={{
                     padding: "14px 16px", borderRadius: 12,
-                    background: "linear-gradient(135deg, rgba(107,70,193,0.1), rgba(83,42,168,0.04))",
-                    border: "1px dashed rgba(107,70,193,0.3)",
+                    background: "rgba(0,0,0,0.15)",
+                    border: "1px dashed var(--color-outline-variant)",
                     display: "flex", alignItems: "center", gap: 12,
                   }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 28, color: "#6b46c1", flexShrink: 0 }}>confirmation_number</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 28, color: "var(--color-primary-container)", flexShrink: 0 }}>confirmation_number</span>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 800, color: "#6b46c1", letterSpacing: "0.06em" }}>{form.code}</p>
-                      {form.alias && <p style={{ fontSize: 11, color: "#7a7484" }}>{form.alias}</p>}
-                      <p style={{ fontSize: 12, color: "#494453", marginTop: 2 }}>
+                      <p style={{ fontSize: 13, fontWeight: 800, color: "var(--color-primary-container)", letterSpacing: "0.06em" }}>{form.code}</p>
+                      {form.alias && <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)" }}>{form.alias}</p>}
+                      <p style={{ fontSize: 12, color: "var(--color-on-surface-variant)", marginTop: 2 }}>
                         {form.discountType === "percentage" ? `${form.discountValue}% off` : `৳${form.discountValue} flat discount`}
                         {form.maxUses > 0 ? ` · ${form.maxUses} uses` : " · Unlimited uses"}
                       </p>

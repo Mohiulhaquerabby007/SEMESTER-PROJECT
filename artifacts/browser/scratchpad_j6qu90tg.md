@@ -1,0 +1,12 @@
+# Plan
+- [ ] Navigate to credentials page: https://console.cloud.google.com/apis/credentials?project=flexypay-82d33
+- [ ] Wait 6 seconds for the page to load completely.
+- [ ] Take a screenshot of the page to inspect OAuth 2.0 Client IDs.
+- [ ] Find OAuth client ID for Web (starts with '820058558103') and click its edit pencil or link.
+- [ ] Scroll down to 'Authorized JavaScript origins'.
+- [ ] Click 'ADD URI' and add:
+  - http://localhost:3000
+  - https://dating-9fbf9.web.app
+  - https://dating-9fbf9.firebaseapp.com
+- [ ] Click 'SAVE'.
+- [ ] Wait 3 seconds and take a confirmation screenshot.

@@ -19,7 +19,6 @@ const riderSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: [true, "Phone is required"],
-      unique: true,
       trim: true,
     },
     password: {
@@ -30,8 +29,8 @@ const riderSchema = new mongoose.Schema(
     },
     vehicleType: {
       type: String,
-      enum: ["bicycle", "bike", "car", "van"],
-      default: "bike",
+      enum: ["bicycle", "motorcycle", "car"],
+      default: "motorcycle",
     },
     isAvailable: {
       type: Boolean,
@@ -44,10 +43,12 @@ const riderSchema = new mongoose.Schema(
     totalEarnings: {
       type: Number,
       default: 0,
+      min: 0,
     },
     completedDeliveries: {
       type: Number,
       default: 0,
+      min: 0,
     },
     profilePic: {
       type: String,
@@ -71,8 +72,10 @@ riderSchema.pre("save", async function (next) {
   next();
 });
 
-riderSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+riderSchema.methods.matchPassword = function (entered) {
+  return bcrypt.compare(entered, this.password);
 };
+
+riderSchema.methods.comparePassword = riderSchema.methods.matchPassword;
 
 module.exports = mongoose.model("Rider", riderSchema);

@@ -60,10 +60,11 @@ const NotificationInbox = ({ onClose }) => {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
-        border: "1px solid rgba(107, 70, 193, 0.2)",
-        background: "rgba(255, 255, 255, 0.95)",
-        backdropFilter: "blur(20px)"
+        boxShadow: "0 20px 50px rgba(0,0,0,0.4)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        background: "rgba(15, 23, 42, 0.9)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)"
       }}
       onClick={(e) => e.stopPropagation()}
     >
@@ -73,20 +74,20 @@ const NotificationInbox = ({ onClose }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        borderBottom: "1px solid rgba(107, 70, 193, 0.1)",
-        background: "rgba(107, 70, 193, 0.03)"
+        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        background: "rgba(255, 255, 255, 0.02)"
       }}>
         <div>
-          <h3 style={{ fontSize: "14px", fontWeight: 800, color: "#181c1e" }}>Notifications</h3>
-          <p style={{ fontSize: "10px", color: "#7a7484", fontWeight: 600 }}>{unreadCount} unread messages</p>
+          <h3 style={{ fontSize: "14px", fontWeight: 800, color: "var(--color-on-surface)" }}>Notifications</h3>
+          <p style={{ fontSize: "10px", color: "var(--color-on-surface-variant)", fontWeight: 600 }}>{unreadCount} unread messages</p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           {safeNotifications.length > 0 && (
             <button
               onClick={() => deleteAllMutation.mutate()}
               style={{
-                fontSize: "10px", fontWeight: 700, color: "#dc2626",
-                background: "rgba(220, 38, 38, 0.08)", border: "none", borderRadius: "6px",
+                fontSize: "10px", fontWeight: 700, color: "#f87171",
+                background: "rgba(239, 68, 68, 0.15)", border: "none", borderRadius: "6px",
                 padding: "4px 8px", cursor: "pointer"
               }}
             >
@@ -97,8 +98,8 @@ const NotificationInbox = ({ onClose }) => {
             <button
               onClick={() => markAllMutation.mutate()}
               style={{
-                fontSize: "10px", fontWeight: 700, color: "#6b46c1",
-                background: "rgba(107, 70, 193, 0.08)", border: "none", borderRadius: "6px",
+                fontSize: "10px", fontWeight: 700, color: "var(--color-primary-container)",
+                background: "rgba(139, 92, 246, 0.15)", border: "none", borderRadius: "6px",
                 padding: "4px 8px", cursor: "pointer"
               }}
             >
@@ -107,7 +108,7 @@ const NotificationInbox = ({ onClose }) => {
           )}
           <button 
             onClick={onClose}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#7a7484", display: "flex" }}
+            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-on-surface-variant)", display: "flex" }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>close</span>
           </button>
@@ -120,15 +121,15 @@ const NotificationInbox = ({ onClose }) => {
           <div style={{ padding: "40px", textAlign: "center" }}>
             <div className="animate-spin" style={{
               width: "24px", height: "24px", borderRadius: "50%", margin: "0 auto",
-              border: "2px solid #d0c0e4", borderTopColor: "#6b46c1"
+              border: "2px solid rgba(255,255,255,0.1)", borderTopColor: "var(--color-primary)"
             }} />
           </div>
         ) : safeNotifications.length === 0 ? (
           <div style={{ padding: "40px 20px", textAlign: "center" }}>
-            <span className="material-symbols-outlined" style={{ fontSize: "32px", color: "#cbc3d5", display: "block", marginBottom: "8px" }}>
+            <span className="material-symbols-outlined" style={{ fontSize: "32px", color: "var(--color-on-surface-variant)", display: "block", marginBottom: "8px" }}>
               notifications_none
             </span>
-            <p style={{ color: "#7a7484", fontSize: "12px", fontWeight: 600 }}>All caught up!</p>
+            <p style={{ color: "var(--color-on-surface-variant)", fontSize: "12px", fontWeight: 600 }}>All caught up!</p>
           </div>
         ) : (
           safeNotifications.map((n) => (
@@ -137,8 +138,8 @@ const NotificationInbox = ({ onClose }) => {
               onClick={() => { if (!n.isRead) markOneMutation.mutate(n._id); }}
               style={{
                 padding: "12px 20px",
-                borderBottom: "1px solid rgba(107, 70, 193, 0.05)",
-                background: n.isRead ? "transparent" : "rgba(107, 70, 193, 0.04)",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                background: n.isRead ? "transparent" : "rgba(255, 255, 255, 0.03)",
                 cursor: n.isRead ? "pointer" : "default",
                 display: "flex", gap: "12px",
                 transition: "background 0.2s"
@@ -146,29 +147,29 @@ const NotificationInbox = ({ onClose }) => {
             >
               <div style={{
                 width: "32px", height: "32px", borderRadius: "10px",
-                background: n.isRead ? "rgba(122, 116, 132, 0.08)" : "rgba(107, 70, 193, 0.1)",
+                background: n.isRead ? "rgba(255, 255, 255, 0.05)" : "rgba(139, 92, 246, 0.15)",
                 display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
               }}>
-                <span className="material-symbols-outlined" style={{ fontSize: "16px", color: n.isRead ? "#7a7484" : "#6b46c1" }}>
+                <span className="material-symbols-outlined" style={{ fontSize: "16px", color: n.isRead ? "var(--color-on-surface-variant)" : "var(--color-primary-container)" }}>
                   {n.title.toLowerCase().includes("offer") ? "local_offer" : "campaign"}
                 </span>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontWeight: n.isRead ? 600 : 800, fontSize: "12px", color: "#181c1e", marginBottom: "2px" }}>
+                <p style={{ fontWeight: n.isRead ? 600 : 800, fontSize: "12px", color: "var(--color-on-surface)", marginBottom: "2px" }}>
                   {n.title}
                 </p>
                 <p style={{ 
-                  fontSize: "11px", color: "#494453", lineHeight: "1.4",
+                  fontSize: "11px", color: "var(--color-on-surface-variant)", lineHeight: "1.4",
                   display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
                 }}>
                   {n.body}
                 </p>
-                <p style={{ fontSize: "9px", color: "#7a7484", marginTop: "4px", fontWeight: 700 }}>
+                <p style={{ fontSize: "9px", color: "var(--color-on-surface-variant)", marginTop: "4px", fontWeight: 700 }}>
                   {formatTime(n.createdAt)}
                 </p>
               </div>
               {!n.isRead && (
-                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#6b46c1", marginTop: "4px" }} />
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--color-primary)", marginTop: "4px" }} />
               )}
             </div>
           ))
@@ -179,12 +180,12 @@ const NotificationInbox = ({ onClose }) => {
       <div style={{
         padding: "10px",
         textAlign: "center",
-        borderTop: "1px solid rgba(107, 70, 193, 0.1)",
-        background: "rgba(255, 255, 255, 0.5)"
+        borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+        background: "rgba(15, 23, 42, 0.8)"
       }}>
         <button 
           style={{ 
-            fontSize: "11px", fontWeight: 700, color: "#6b46c1",
+            fontSize: "11px", fontWeight: 700, color: "var(--color-primary-container)",
             background: "none", border: "none", cursor: "pointer"
           }}
         >

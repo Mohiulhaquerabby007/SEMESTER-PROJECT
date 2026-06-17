@@ -22,6 +22,7 @@ router.post("/google-login",       googleLogin);        // ← Google Sign‑In
 router.get("/profile",             protect, getProfile);
 router.patch("/profile-pic",       protect, updateProfilePic);
 router.patch("/profile-details",   protect, updateProfileDetails);
+router.patch("/fcm-token",         protect, updateFcmToken);
 router.post("/update-fcm-token",   protect, updateFcmToken);
 router.patch("/rider/nid",         protect, updateRiderNid);
 

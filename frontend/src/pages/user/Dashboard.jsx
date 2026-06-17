@@ -11,8 +11,8 @@ const StatCard = ({ icon, label, value, color }) => (
       <span className="material-symbols-outlined" style={{ fontSize: 22, color }}>{icon}</span>
     </div>
     <div>
-      <p style={{ fontSize: "1.4rem", fontWeight: 800, color: "#181c1e", lineHeight: 1 }}>{value}</p>
-      <p style={{ fontSize: 11, color: "#7a7484", marginTop: 3 }}>{label}</p>
+      <p style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--color-on-surface)", lineHeight: 1 }}>{value}</p>
+      <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", marginTop: 3 }}>{label}</p>
     </div>
   </div>
 );
@@ -36,10 +36,10 @@ const UserDashboard = () => {
 
       {/* Greeting */}
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#181c1e" }}>
+        <h1 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--color-on-surface)" }}>
           Good day, {user?.name?.split(" ")[0]} 👋
         </h1>
-        <p style={{ fontSize: 13, color: "#7a7484", marginTop: 2 }}>Track and manage your deliveries</p>
+        <p style={{ fontSize: 13, color: "var(--color-on-surface-variant)", marginTop: 2 }}>Track and manage your deliveries</p>
       </div>
 
       {/* Mobile CTA */}
@@ -51,18 +51,18 @@ const UserDashboard = () => {
 
       {/* Stats */}
       <div className="stat-grid" style={{ marginBottom: 18 }}>
-        <StatCard icon="schedule"       label="Pending"   value={pending}   color="#B45309" />
-        <StatCard icon="local_shipping" label="Active"    value={active}    color="#6b46c1" />
-        <StatCard icon="check_circle"   label="Delivered" value={delivered} color="#15803D" />
+        <StatCard icon="schedule"       label="Pending"   value={pending}   color="#f59e0b" />
+        <StatCard icon="local_shipping" label="Active"    value={active}    color="var(--color-primary-container)" />
+        <StatCard icon="check_circle"   label="Delivered" value={delivered} color="var(--color-success)" />
       </div>
 
       {/* Recent orders */}
       <div className="glass-panel" style={{ borderRadius: 18, overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "14px 18px", borderBottom: "1px solid rgba(255,255,255,0.45)" }}>
-          <h2 style={{ fontWeight: 700, color: "#181c1e", fontSize: "0.95rem" }}>Recent Orders</h2>
+        <div style={{ display: "flex", alignItems: "center", justifyOrd: "space-between", justifyContent: "space-between",
+          padding: "14px 18px", borderBottom: "1px solid var(--color-outline)" }}>
+          <h2 style={{ fontWeight: 700, color: "var(--color-on-surface)", fontSize: "0.95rem" }}>Recent Orders</h2>
           <button onClick={() => navigate("/user/orders")}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#6b46c1",
+            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--color-primary-container)",
               fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 3 }}>
             View all
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_forward</span>
@@ -71,31 +71,32 @@ const UserDashboard = () => {
 
         {recent.length === 0 ? (
           <div style={{ textAlign: "center", padding: "48px 20px" }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 44, color: "#cbc3d5" }}>inbox</span>
-            <p style={{ marginTop: 10, fontSize: 14, color: "#7a7484" }}>No orders yet</p>
+            <span className="material-symbols-outlined" style={{ fontSize: 44, color: "var(--color-outline-variant)" }}>inbox</span>
+            <p style={{ marginTop: 10, fontSize: 14, color: "var(--color-on-surface-variant)" }}>No orders yet</p>
           </div>
         ) : recent.map((o) => (
           <button key={o._id} onClick={() => navigate(`/user/orders/${o._id}`)}
             style={{
               width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "12px 18px", borderBottom: "1px solid rgba(255,255,255,0.35)",
+              padding: "12px 18px", borderBottom: "1px solid var(--color-outline)",
               background: "none", border: "none", cursor: "pointer", textAlign: "left", gap: 12,
+              transition: "background .15s"
             }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.4)"}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
             onMouseLeave={e => e.currentTarget.style.background = "none"}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "#181c1e",
+              <p style={{ fontSize: 13, fontWeight: 600, color: "var(--color-on-surface)",
                 whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {o.pickupAddress}
               </p>
-              <p style={{ fontSize: 11, color: "#7a7484", marginTop: 2,
+              <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", marginTop: 2,
                 whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 → {o.dropoffAddress}
               </p>
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
               <StatusBadge status={o.status} />
-              <span style={{ fontSize: 13, fontWeight: 800, color: "#6b46c1" }}>৳{o.price}</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: "var(--color-primary-container)" }}>৳{o.price}</span>
             </div>
           </button>
         ))}

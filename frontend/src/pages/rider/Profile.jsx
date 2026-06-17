@@ -71,8 +71,8 @@ const RiderProfile = () => {
   return (
     <div className="page-container animate-fade-in">
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#181c1e" }}>My Profile</h1>
-        <p style={{ fontSize: 13, color: "#7a7484", marginTop: 2 }}>Manage your rider account</p>
+        <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--color-on-surface)" }}>My Profile</h1>
+        <p style={{ fontSize: 13, color: "var(--color-on-surface-variant)", marginTop: 2 }}>Manage your rider account</p>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -84,8 +84,8 @@ const RiderProfile = () => {
           <div style={{
             padding: "32px 24px",
             display: "flex", flexDirection: "column", alignItems: "center",
-            background: "linear-gradient(135deg, rgba(107,70,193,0.12), rgba(83,42,168,0.04))",
-            borderBottom: "1px solid rgba(255,255,255,0.4)",
+            background: "rgba(0,0,0,0.15)",
+            borderBottom: "1px solid var(--color-outline)",
           }}>
             <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} style={{ display: "none" }} />
 
@@ -93,11 +93,11 @@ const RiderProfile = () => {
               onClick={() => !isUploading && fileInputRef.current.click()}
               title="Click to update profile picture"
               style={{
-                width: 84, height: 84, borderRadius: "50%", background: "#6b46c1",
+                width: 84, height: 84, borderRadius: "50%", background: "var(--color-primary)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "#fff", fontSize: "2rem", fontWeight: 800, marginBottom: 16,
-                boxShadow: "0 8px 24px rgba(107,70,193,0.25)", cursor: "pointer",
-                position: "relative", overflow: "hidden", border: "2px solid rgba(255,255,255,0.8)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.3)", cursor: "pointer",
+                position: "relative", overflow: "hidden", border: "2px solid var(--color-outline-variant)",
               }}
               onMouseEnter={e => { if (e.currentTarget.lastChild) e.currentTarget.lastChild.style.opacity = 1; }}
               onMouseLeave={e => { if (e.currentTarget.lastChild) e.currentTarget.lastChild.style.opacity = 0; }}
@@ -118,13 +118,13 @@ const RiderProfile = () => {
               </div>
             </div>
 
-            <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#181c1e", marginBottom: 4 }}>
+            <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--color-on-surface)", marginBottom: 4 }}>
               {user?.name || "Rider"}
             </h2>
             <span style={{
               padding: "4px 12px", borderRadius: 999, fontSize: 11, fontWeight: 800,
               textTransform: "uppercase", letterSpacing: "0.08em",
-              background: "rgba(107,70,193,0.15)", color: "#6b46c1",
+              background: "rgba(139,92,246,0.15)", color: "var(--color-primary-container)",
             }}>
               {VEHICLE_ICONS[user?.vehicleType] || "🏍️"} Delivery Partner
             </span>
@@ -141,20 +141,20 @@ const RiderProfile = () => {
             ].map(({ icon, label, value }, i, arr) => (
               <div key={label} style={{
                 display: "flex", alignItems: "center", gap: 16, padding: "16px 24px",
-                borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.35)" : "none",
+                borderBottom: i < arr.length - 1 ? "1px solid var(--color-outline)" : "none",
                 transition: "background 0.2s",
               }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.3)"}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(107,70,193,0.08)",
+                <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(139,92,246,0.1)",
                   display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#6b46c1" }}>{icon}</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--color-primary-container)" }}>{icon}</span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 11, color: "#7a7484", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>
+                  <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>
                     {label}
                   </p>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "#181c1e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-on-surface)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {value}
                   </p>
                 </div>
@@ -169,18 +169,18 @@ const RiderProfile = () => {
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{
                 width: 44, height: 44, borderRadius: 12,
-                background: isAvailable ? "rgba(21,128,61,0.1)" : "rgba(122,116,132,0.1)",
+                background: isAvailable ? "rgba(16,185,129,0.12)" : "rgba(255,255,255,0.05)",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 22, color: isAvailable ? "#15803D" : "#7a7484" }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 22, color: isAvailable ? "var(--color-success)" : "var(--color-on-surface-variant)" }}>
                   {isAvailable ? "online_prediction" : "offline_pin"}
                 </span>
               </div>
               <div>
-                <p style={{ fontWeight: 700, color: "#181c1e", fontSize: "0.95rem" }}>
+                <p style={{ fontWeight: 700, color: "var(--color-on-surface)", fontSize: "0.95rem" }}>
                   {isAvailable ? "You're Online" : "You're Offline"}
                 </p>
-                <p style={{ fontSize: 12, color: "#7a7484", marginTop: 2 }}>
+                <p style={{ fontSize: 12, color: "var(--color-on-surface-variant)", marginTop: 2 }}>
                   {isAvailable ? "Accepting new delivery requests" : "Not visible to dispatchers"}
                 </p>
               </div>
@@ -192,7 +192,7 @@ const RiderProfile = () => {
               disabled={availabilityMutation.isPending}
               style={{
                 width: 52, height: 28, borderRadius: 14, border: "none", cursor: "pointer",
-                background: isAvailable ? "#15803D" : "#d0c0e4",
+                background: isAvailable ? "var(--color-success)" : "rgba(255,255,255,0.15)",
                 position: "relative", transition: "background 0.25s",
                 flexShrink: 0, opacity: availabilityMutation.isPending ? 0.6 : 1,
               }}
@@ -215,10 +215,10 @@ const RiderProfile = () => {
               width: "100%", padding: "14px", borderRadius: 12, border: "none", cursor: "pointer",
               background: "#dc2626", color: "#fff", fontWeight: 700, fontSize: "0.95rem",
               display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              transition: "all 0.2s", boxShadow: "0 4px 14px rgba(220,38,38,0.2)",
+              transition: "all 0.2s", boxShadow: "0 4px 14px rgba(0,0,0,0.3)",
             }}
-            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(220,38,38,0.3)"; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(220,38,38,0.2)"; }}>
+            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(220,38,38,0.4)"; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.3)"; }}>
             <span className="material-symbols-outlined" style={{ fontSize: 20 }}>logout</span>
             Sign Out
           </button>

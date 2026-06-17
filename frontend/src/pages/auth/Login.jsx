@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { GoogleLogin } from "@react-oauth/google";
@@ -12,6 +13,7 @@ const Login = () => {
   const [showPass, setShowPass] = useState(false);
 
   const { login, googleLogin } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const redirect = (user) => {
@@ -51,14 +53,41 @@ const Login = () => {
     <div
       className="min-h-screen flex items-center justify-center p-4 sm:p-8"
       style={{ 
-        background: "#E5D9F2",
+        background: "var(--color-soft-lavender)",
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
+        transition: "background-color 0.3s ease"
       }}
     >
+      {/* Floating Theme Toggle */}
+      <button
+        onClick={toggleTheme}
+        style={{
+          position: "absolute",
+          top: 20,
+          right: 20,
+          zIndex: 10,
+          background: "var(--bg-glass-panel)",
+          border: "1px solid var(--border-glass-panel)",
+          borderRadius: 12,
+          padding: 10,
+          cursor: "pointer",
+          color: "var(--color-on-surface)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.2s"
+        }}
+        title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+          {theme === "dark" ? "light_mode" : "dark_mode"}
+        </span>
+      </button>
+
       {/* Decorative background blobs */}
-      <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "40vw", height: "40vw", background: "rgba(107,70,193,0.05)", borderRadius: "50%", filter: "blur(80px)" }} />
-      <div style={{ position: "absolute", bottom: "-10%", left: "-10%", width: "30vw", height: "30vw", background: "rgba(107,70,193,0.03)", borderRadius: "50%", filter: "blur(60px)" }} />
+      <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "40vw", height: "40vw", background: "rgba(139, 92, 246, 0.08)", borderRadius: "50%", filter: "blur(80px)" }} />
+      <div style={{ position: "absolute", bottom: "-10%", left: "-10%", width: "30vw", height: "30vw", background: "rgba(6, 182, 212, 0.05)", borderRadius: "50%", filter: "blur(60px)" }} />
 
       <div className="w-full animate-slide-up" style={{ maxWidth: "480px", position: "relative", zIndex: 1 }}>
 
@@ -66,7 +95,7 @@ const Login = () => {
         <div className="text-center mb-8">
           <div
             className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 overflow-hidden"
-            style={{ background: "rgba(107,70,193,0.1)", boxShadow: "0 10px 25px rgba(107,70,193,0.15)" }}
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-glass-panel)", boxShadow: "0 10px 25px rgba(0,0,0,0.2)" }}
           >
             <img 
               src="/logo.png" 
@@ -81,7 +110,7 @@ const Login = () => {
           <h1 className="text-4xl font-extrabold tracking-tight" style={{ color: "var(--color-primary-container)", fontSize: "2.2rem" }}>
             QuickDrop
           </h1>
-          <p className="mt-2 text-base font-medium" style={{ color: "#7a7484" }}>
+          <p className="mt-2 text-base font-medium" style={{ color: "var(--color-on-surface-variant)" }}>
             Fast & Reliable Elite Delivery
           </p>
         </div>
@@ -90,16 +119,16 @@ const Login = () => {
         <div
           className="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl"
           style={{ 
-            boxShadow: "0 25px 50px -12px rgba(83,42,168,0.15)",
-            border: "1px solid rgba(255,255,255,0.8)",
-            background: "rgba(255, 255, 255, 0.75)",
+            boxShadow: "var(--shadow-premium)",
+            border: "1px solid var(--border-glass-panel)",
+            background: "var(--bg-glass-panel)",
             backdropFilter: "blur(20px)"
           }}
         >
           {/* Role tabs */}
           <div
             className="flex gap-1.5 p-1.5 rounded-2xl mb-8"
-            style={{ background: "rgba(0,0,0,0.04)" }}
+            style={{ background: "rgba(0,0,0,0.08)" }}
           >
             {[["Customer Login", false], ["Rider Login", true]].map(([label, rider]) => (
               <button
@@ -109,8 +138,8 @@ const Login = () => {
                 className="flex-1 py-3.5 rounded-xl text-sm font-bold transition-all duration-200"
                 style={{
                   background: isRider === rider ? "var(--color-primary-container)" : "transparent",
-                  color: isRider === rider ? "#fff" : "#494453",
-                  boxShadow: isRider === rider ? "0 4px 12px rgba(107,70,193,0.3)" : "none",
+                  color: isRider === rider ? "#fff" : "var(--color-on-surface-variant)",
+                  boxShadow: isRider === rider ? "0 4px 12px rgba(139,92,246,0.3)" : "none",
                 }}
               >
                 {label}
@@ -123,7 +152,7 @@ const Login = () => {
             <div className="relative">
               <span
                 className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2"
-                style={{ fontSize: "20px", color: "#7a7484" }}
+                style={{ fontSize: "20px", color: "var(--color-on-surface-variant)" }}
               >
                 mail
               </span>
@@ -138,8 +167,9 @@ const Login = () => {
                   height: "56px", 
                   borderRadius: "16px",
                   fontSize: "16px",
-                  border: "1px solid rgba(107,70,193,0.1)",
-                  background: "#fff"
+                  border: "1.5px solid var(--border-input)",
+                  background: "var(--bg-input)",
+                  color: "var(--color-input-text)"
                 }}
                 required
               />
@@ -148,7 +178,7 @@ const Login = () => {
             <div className="relative">
               <span
                 className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2"
-                style={{ fontSize: "20px", color: "#7a7484" }}
+                style={{ fontSize: "20px", color: "var(--color-on-surface-variant)" }}
               >
                 lock
               </span>
@@ -164,8 +194,9 @@ const Login = () => {
                   height: "56px", 
                   borderRadius: "16px",
                   fontSize: "16px",
-                  border: "1px solid rgba(107,70,193,0.1)",
-                  background: "#fff"
+                  border: "1.5px solid var(--border-input)",
+                  background: "var(--bg-input)",
+                  color: "var(--color-input-text)"
                 }}
                 required
               />
@@ -175,7 +206,7 @@ const Login = () => {
                 style={{
                   position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
                   background: "none", border: "none", padding: 8, cursor: "pointer",
-                  color: "#7a7484", display: "flex"
+                  color: "var(--color-on-surface-variant)", display: "flex"
                 }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
@@ -195,7 +226,7 @@ const Login = () => {
                 justifyContent: "center", 
                 fontSize: "16px", 
                 fontWeight: 800,
-                boxShadow: "0 10px 20px rgba(107,70,193,0.25)"
+                boxShadow: "0 10px 20px rgba(139,92,246,0.3)"
               }}
             >
               {loading ? (
@@ -219,12 +250,12 @@ const Login = () => {
               <div
                 style={{
                   display: "flex", alignItems: "center", gap: 16,
-                  margin: "24px 0", color: "#7a7484",
+                  margin: "24px 0", color: "var(--color-on-surface-variant)",
                 }}
               >
-                <div style={{ flex: 1, height: 1, background: "rgba(0,0,0,0.06)" }} />
+                <div style={{ flex: 1, height: 1, background: "var(--color-outline)" }} />
                 <span style={{ fontSize: 13, fontWeight: 700, whiteSpace: "nowrap" }}>or continue with</span>
-                <div style={{ flex: 1, height: 1, background: "rgba(0,0,0,0.06)" }} />
+                <div style={{ flex: 1, height: 1, background: "var(--color-outline)" }} />
               </div>
 
               <div style={{ display: "flex", justifyContent: "center" }}>
@@ -242,7 +273,7 @@ const Login = () => {
             </>
           )}
 
-          <p className="text-center text-base mt-8" style={{ color: "#494453", fontWeight: 500 }}>
+          <p className="text-center text-base mt-8" style={{ color: "var(--color-on-surface-variant)", fontWeight: 500 }}>
             No account?{" "}
             <Link
               to="/register"

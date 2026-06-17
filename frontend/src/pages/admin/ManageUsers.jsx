@@ -33,10 +33,10 @@ const ManageUsers = () => {
   return (
     <div className="page-container animate-fade-in">
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#181c1e" }}>
+        <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--color-on-surface)" }}>
           Manage Users
         </h1>
-        <p style={{ fontSize: 13, color: "#7a7484", marginTop: 2 }}>
+        <p style={{ fontSize: 13, color: "var(--color-on-surface-variant)", marginTop: 2 }}>
           {users.length} registered customers
         </p>
       </div>
@@ -44,18 +44,18 @@ const ManageUsers = () => {
       {/* Search bar */}
       <div style={{ position: "relative", marginBottom: 24 }}>
         <span className="material-symbols-outlined"
-          style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "#7a7484" }}>
+          style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 20, color: "var(--color-on-surface-variant)" }}>
           search
         </span>
         <input placeholder="Search by name, email or phone…"
           value={search} onChange={(e) => handleSearch(e.target.value)}
-          style={{ width: "100%", padding: "12px 14px 12px 42px", borderRadius: 12, border: "1px solid rgba(107,70,193,0.2)",
-            background: "rgba(255,255,255,0.7)", backdropFilter: "blur(8px)", fontSize: 14, color: "#181c1e",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.03)" }} />
+          style={{ width: "100%", padding: "12px 14px 12px 42px", borderRadius: 12, border: "1.5px solid rgba(255,255,255,0.1)",
+            background: "rgba(13, 17, 30, 0.6)", fontSize: 14, color: "#fff",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.3)" }} />
         {search && (
           <button onClick={() => { setSearch(""); setDebouncedSearch(""); }}
             style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
-              background: "none", border: "none", cursor: "pointer", color: "#7a7484", display: "flex", alignItems: "center" }}>
+              background: "none", border: "none", cursor: "pointer", color: "var(--color-on-surface-variant)", display: "flex", alignItems: "center" }}>
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>close</span>
           </button>
         )}
@@ -64,25 +64,25 @@ const ManageUsers = () => {
       {isLoading ? (
         <div style={{ display: "flex", justifyContent: "center", padding: "60px 0" }}>
           <div className="animate-spin" style={{ width: 32, height: 32, borderRadius: "50%",
-            border: "3px solid #d0c0e4", borderTopColor: "#6b46c1" }} />
+            border: "3px solid var(--color-outline)", borderTopColor: "var(--color-primary)" }} />
         </div>
       ) : users.length === 0 ? (
         <div className="glass-panel" style={{ borderRadius: 18, textAlign: "center", padding: "60px 20px" }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 48, color: "#cbc3d5" }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--color-outline-variant)" }}>
             person_search
           </span>
-          <p style={{ marginTop: 12, fontWeight: 700, color: "#181c1e", fontSize: "1.1rem" }}>No users found</p>
-          <p style={{ fontSize: 13, color: "#7a7484", marginTop: 4 }}>Try a different search term</p>
+          <p style={{ marginTop: 12, fontWeight: 700, color: "var(--color-on-surface)", fontSize: "1.1rem" }}>No users found</p>
+          <p style={{ fontSize: 13, color: "var(--color-on-surface-variant)", marginTop: 4 }}>Try a different search term</p>
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
           {users.map((u) => (
             <div key={u._id} className="glass-panel" style={{ 
                 borderRadius: 18, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column",
-                transition: "transform 0.2s, box-shadow 0.2s", cursor: "pointer"
+                transition: "transform 0.2s, box-shadow 0.2s"
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 24px rgba(107,70,193,0.12)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.05)"; }}>
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.3)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
               
               <div style={{ padding: "18px 20px", flex: 1, position: "relative" }}>
                 {/* Badges */}
@@ -96,7 +96,7 @@ const ManageUsers = () => {
 
                 <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
                   {/* Avatar */}
-                  <div style={{ width: 50, height: 50, borderRadius: "50%", background: u.isBlocked ? "#9CA3AF" : "#0369A1",
+                  <div style={{ width: 50, height: 50, borderRadius: "50%", background: u.isBlocked ? "#9CA3AF" : "var(--color-primary-container)",
                     display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 18, flexShrink: 0, overflow: "hidden" }}>
                     {u.profilePic ? (
                       <img src={u.profilePic} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover", filter: u.isBlocked ? "grayscale(100%)" : "none" }} />
@@ -107,38 +107,38 @@ const ManageUsers = () => {
 
                   {/* Basic Info */}
                   <div style={{ flex: 1, minWidth: 0, paddingRight: u.isBlocked ? 60 : 0 }}>
-                    <p style={{ fontWeight: 800, fontSize: 15, color: "#181c1e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <p style={{ fontWeight: 800, fontSize: 15, color: "var(--color-on-surface)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {u.name}
                     </p>
-                    <p style={{ fontSize: 12, color: "#7a7484", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{u.email}</p>
+                    <p style={{ fontSize: 12, color: "var(--color-on-surface-variant)", marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{u.email}</p>
                   </div>
                 </div>
 
                 {/* Contact & Orders */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, background: "rgba(255,255,255,0.4)", padding: "12px", borderRadius: 10 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, background: "rgba(0,0,0,0.15)", padding: "12px", borderRadius: 10 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "#6b46c1" }}>call</span>
-                    <span style={{ fontSize: 12, color: "#494453", fontWeight: 600 }}>{u.phone}</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "var(--color-primary-container)" }}>call</span>
+                    <span style={{ fontSize: 12, color: "var(--color-on-surface-variant)", fontWeight: 600 }}>{u.phone}</span>
                   </div>
                   <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "#6b46c1", marginTop: 1 }}>home</span>
-                    <span style={{ fontSize: 12, color: "#494453", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "var(--color-primary-container)", marginTop: 1 }}>home</span>
+                    <span style={{ fontSize: 12, color: "var(--color-on-surface-variant)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                       {u.address || "No address provided"}
                     </span>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "#6b46c1" }}>package_2</span>
-                    <span style={{ fontSize: 12, color: "#494453", fontWeight: 700 }}>{u.orderCount ?? 0} total orders</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 15, color: "var(--color-primary-container)" }}>package_2</span>
+                    <span style={{ fontSize: 12, color: "var(--color-on-surface-variant)", fontWeight: 700 }}>{u.orderCount ?? 0} total orders</span>
                   </div>
                 </div>
               </div>
 
               {/* Footer Action */}
-              <div style={{ background: "rgba(107,70,193,0.03)", padding: "12px 20px", borderTop: "1px solid rgba(255,255,255,0.4)" }}>
+              <div style={{ background: "rgba(0,0,0,0.15)", padding: "12px 20px", borderTop: "1px solid var(--color-outline)" }}>
                 <button onClick={(e) => { e.stopPropagation(); blockMutation.mutate(u._id); }} disabled={blockMutation.isPending}
                   style={{
                     width: "100%", padding: "8px 0", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", border: "none",
-                    background: u.isBlocked ? "#15803D" : "#dc2626", color: "#fff", transition: "opacity 0.2s"
+                    background: u.isBlocked ? "var(--color-success)" : "#dc2626", color: "#fff", transition: "opacity 0.2s"
                   }}
                   onMouseEnter={e => e.currentTarget.style.opacity = 0.85}
                   onMouseLeave={e => e.currentTarget.style.opacity = 1}>

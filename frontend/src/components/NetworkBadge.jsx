@@ -26,11 +26,12 @@ const NetworkBadge = () => {
     <div
       className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2 px-4 py-2 rounded-full shadow-lg animate-fade-in"
       style={{
-        background: online ? "rgba(26, 122, 60, 0.9)" : "rgba(186, 26, 26, 0.9)",
+        background: online ? "rgba(16, 185, 129, 0.9)" : "rgba(239, 68, 68, 0.9)",
         color: "#fff",
         fontSize: "13px",
         fontWeight: 600,
         backdropFilter: "blur(12px)",
+        border: online ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid rgba(239, 68, 68, 0.3)",
       }}
     >
       <span className="material-symbols-outlined" style={{ fontSize: "16px" }}>

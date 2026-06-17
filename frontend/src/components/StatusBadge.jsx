@@ -1,10 +1,10 @@
 const colors = {
-  pending:    { bg: "#FFF8E1", text: "#B45309", border: "#FDE68A" },
-  accepted:   { bg: "#EDE9FE", text: "#6b46c1", border: "#DDD6FE" },
-  picked_up:  { bg: "#E0F2FE", text: "#0369A1", border: "#BAE6FD" },
-  in_transit: { bg: "#ECFDF5", text: "#065F46", border: "#A7F3D0" },
-  delivered:  { bg: "#F0FDF4", text: "#15803D", border: "#86EFAC" },
-  cancelled:  { bg: "#FEF2F2", text: "#B91C1C", border: "#FECACA" },
+  pending:    { bg: "rgba(245, 158, 11, 0.12)", text: "#f59e0b", border: "rgba(245, 158, 11, 0.2)" },
+  accepted:   { bg: "rgba(139, 92, 246, 0.12)", text: "#a78bfa", border: "rgba(139, 92, 246, 0.2)" },
+  picked_up:  { bg: "rgba(59, 130, 246, 0.12)", text: "#60a5fa", border: "rgba(59, 130, 246, 0.2)" },
+  in_transit: { bg: "rgba(6, 182, 212, 0.12)", text: "#22d3ee", border: "rgba(6, 182, 212, 0.2)" },
+  delivered:  { bg: "rgba(16, 185, 129, 0.12)", text: "#34d399", border: "rgba(16, 185, 129, 0.2)" },
+  cancelled:  { bg: "rgba(239, 68, 68, 0.12)", text: "#f87171", border: "rgba(239, 68, 68, 0.2)" },
 };
 
 const labels = {
@@ -17,7 +17,7 @@ const labels = {
 };
 
 const StatusBadge = ({ status }) => {
-  const c = colors[status] || { bg: "#F1F5F9", text: "#475569", border: "#CBD5E1" };
+  const c = colors[status] || { bg: "rgba(255, 255, 255, 0.05)", text: "var(--color-on-surface-variant)", border: "rgba(255, 255, 255, 0.1)" };
   return (
     <span
       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"

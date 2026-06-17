@@ -53,7 +53,7 @@ const BottomNav = () => {
               key={item.path}
               onClick={() => navigate(item.path)}
               className="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 relative transition-all duration-150"
-              style={{ color: active ? "var(--color-primary-container)" : "var(--color-outline)" }}
+              style={{ color: active ? "var(--color-primary-container)" : "var(--color-on-surface-variant)" }}
             >
               {active && (
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 rounded-full"
@@ -77,7 +77,7 @@ const BottomNav = () => {
                     background: "#dc2626", color: "#fff",
                     fontSize: 8, fontWeight: 800,
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    padding: "0 2px", border: "1.5px solid #fff",
+                    padding: "0 2px", border: "1.5px solid var(--color-surface-container)",
                     animation: "pulse 1.5s infinite",
                   }}>
                     {unreadCount > 9 ? "9+" : unreadCount}

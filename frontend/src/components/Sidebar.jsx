@@ -46,8 +46,8 @@ const Sidebar = () => {
 
       {/* Brand */}
       <div style={{ marginBottom: 20, padding: "0 8px" }}>
-        <div style={{ fontWeight: 800, fontSize: "1.4rem", color: "#6b46c1", letterSpacing: "-0.02em" }}>QuickDrop</div>
-        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", color: "#7a7484", textTransform: "uppercase" }}>
+        <div style={{ fontWeight: 800, fontSize: "1.4rem", color: "var(--color-primary-container)", letterSpacing: "-0.02em" }}>QuickDrop</div>
+        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", color: "var(--color-on-surface-variant)", textTransform: "uppercase" }}>
           Elite Delivery
         </div>
       </div>
@@ -69,29 +69,29 @@ const Sidebar = () => {
               style={{
                 display: "flex", alignItems: "center", gap: 10,
                 padding: "10px 12px", borderRadius: 10, border: "none",
-                background: active ? "rgba(107,70,193,0.13)" : "transparent",
-                color: active ? "#6b46c1" : "#494453",
+                background: active ? "rgba(139, 92, 246, 0.15)" : "transparent",
+                color: active ? "var(--color-primary-container)" : "var(--color-on-surface-variant)",
                 fontWeight: active ? 700 : 500, fontSize: "0.875rem",
                 cursor: "pointer", textAlign: "left", width: "100%",
                 transition: "background .15s, color .15s",
               }}
-              onMouseEnter={e => { if (!active) e.currentTarget.style.background = "rgba(255,255,255,0.6)"; }}
+              onMouseEnter={e => { if (!active) e.currentTarget.style.background = "var(--color-outline-variant)"; }}
               onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}>
               <span className={`material-symbols-outlined${active && item.filled ? " filled" : ""}`}
                 style={{ fontSize: 20 }}>{item.icon}</span>
               <span style={{ flex: 1 }}>{item.label}</span>
-              {active && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#6b46c1", flexShrink: 0 }} />}
+              {active && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--color-primary)", flexShrink: 0 }} />}
             </button>
           );
         })}
       </nav>
 
       {/* User footer */}
-      <div style={{ borderTop: "1px solid rgba(255,255,255,0.45)", paddingTop: 12, marginTop: 8 }}>
+      <div style={{ borderTop: "1px solid var(--color-outline)", paddingTop: 12, marginTop: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 8px" }}>
           <div style={{
             width: 36, height: 36, borderRadius: "50%",
-            background: "#6b46c1", color: "#fff", overflow: "hidden",
+            background: "var(--color-primary)", color: "#fff", overflow: "hidden",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontWeight: 700, fontSize: "0.8rem", flexShrink: 0,
           }}>
@@ -102,15 +102,15 @@ const Sidebar = () => {
             )}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "#181c1e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-on-surface)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {user.name}
             </div>
-            <div style={{ fontSize: 10, color: "#7a7484" }}>{roleLabel[user.accountType]}</div>
+            <div style={{ fontSize: 10, color: "var(--color-on-surface-variant)" }}>{roleLabel[user.accountType]}</div>
           </div>
           <button onClick={logout} title="Logout"
-            style={{ background: "none", border: "none", cursor: "pointer", padding: 6, borderRadius: 8, color: "#7a7484", display: "flex" }}
-            onMouseEnter={e => e.currentTarget.style.background = "#fee2e2"}
-            onMouseLeave={e => e.currentTarget.style.background = "none"}>
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 6, borderRadius: 8, color: "var(--color-on-surface-variant)", display: "flex", transition: "all .15s" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.15)"; e.currentTarget.style.color = "#ef4444"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "var(--color-on-surface-variant)"; }}>
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>
           </button>
         </div>

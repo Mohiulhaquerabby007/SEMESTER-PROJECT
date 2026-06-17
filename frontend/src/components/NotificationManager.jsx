@@ -19,14 +19,15 @@ const NotificationManager = () => {
       // Show a toast
       toast.custom((t) => (
         <div
-          className={`${t.visible ? "animate-slide-up" : "animate-fade-out"} max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+          className={`${t.visible ? "animate-slide-up" : "animate-fade-out"} max-w-sm w-full shadow-lg pointer-events-auto flex`}
           style={{ 
-            background: "rgba(255, 255, 255, 0.95)",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(107, 70, 193, 0.2)",
+            background: "rgba(15, 23, 42, 0.85)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
             borderRadius: "16px",
             padding: "16px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
             display: "flex",
             alignItems: "center",
             gap: "14px"
@@ -36,18 +37,18 @@ const NotificationManager = () => {
             width: "42px",
             height: "42px",
             borderRadius: "12px",
-            background: "rgba(107, 70, 193, 0.1)",
+            background: "rgba(139, 92, 246, 0.15)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#6b46c1",
+            color: "var(--color-primary-container)",
             flexShrink: 0
           }}>
             <span className="material-symbols-outlined filled">campaign</span>
           </div>
           <div style={{ flex: 1 }}>
-            <p style={{ margin: 0, fontWeight: 800, fontSize: "14px", color: "#181c1e" }}>{notif.title}</p>
-            <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#7a7484", lineHeight: "1.4" }}>{notif.body}</p>
+            <p style={{ margin: 0, fontWeight: 800, fontSize: "14px", color: "var(--color-on-surface)" }}>{notif.title}</p>
+            <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--color-on-surface-variant)", lineHeight: "1.4" }}>{notif.body}</p>
           </div>
           <button
             onClick={() => toast.dismiss(t.id)}
@@ -56,7 +57,7 @@ const NotificationManager = () => {
               border: "none",
               padding: "4px",
               cursor: "pointer",
-              color: "#cbc3d5"
+              color: "var(--color-on-surface-variant)"
             }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>close</span>

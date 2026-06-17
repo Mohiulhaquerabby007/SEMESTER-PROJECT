@@ -84,8 +84,8 @@ const Profile = () => {
     <div className="page-container animate-fade-in">
       <div style={{ marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
-          <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#181c1e" }}>Profile</h1>
-          <p style={{ fontSize: 13, color: "#7a7484", marginTop: 2 }}>Manage your account settings</p>
+          <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--color-on-surface)" }}>Profile</h1>
+          <p style={{ fontSize: 13, color: "var(--color-on-surface-variant)", marginTop: 2 }}>Manage your account settings</p>
         </div>
         {!isEditing && (
           <button onClick={() => setIsEditing(true)}
@@ -102,8 +102,8 @@ const Profile = () => {
         <div style={{ 
           padding: "32px 24px", 
           display: "flex", flexDirection: "column", alignItems: "center",
-          background: "linear-gradient(135deg, rgba(107,70,193,0.12), rgba(83,42,168,0.04))",
-          borderBottom: "1px solid rgba(255,255,255,0.4)" 
+          background: "rgba(0,0,0,0.15)",
+          borderBottom: "1px solid var(--color-outline)" 
         }}>
           
           <input 
@@ -118,11 +118,11 @@ const Profile = () => {
             onClick={() => !isUploading && fileInputRef.current.click()}
             title="Click to update profile picture"
             style={{
-              width: 84, height: 84, borderRadius: "50%", background: "#6b46c1",
+              width: 84, height: 84, borderRadius: "50%", background: "var(--color-primary)",
               display: "flex", alignItems: "center", justifyContent: "center",
               color: "#fff", fontSize: "2rem", fontWeight: 800, marginBottom: 16,
-              boxShadow: "0 8px 24px rgba(107,70,193,0.25)", cursor: "pointer",
-              position: "relative", overflow: "hidden", border: "2px solid rgba(255,255,255,0.8)"
+              boxShadow: "0 8px 24px rgba(0,0,0,0.3)", cursor: "pointer",
+              position: "relative", overflow: "hidden", border: "2px solid var(--color-outline-variant)"
             }}
             onMouseEnter={e => {
               if (e.currentTarget.lastChild) e.currentTarget.lastChild.style.opacity = 1;
@@ -149,13 +149,13 @@ const Profile = () => {
             </div>
           </div>
 
-          <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#181c1e", marginBottom: 6 }}>
+          <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--color-on-surface)", marginBottom: 6 }}>
             {user?.name || "Unknown User"}
           </h2>
           <span style={{ 
             padding: "4px 12px", borderRadius: 999, fontSize: 11, fontWeight: 800,
             textTransform: "uppercase", letterSpacing: "0.08em",
-            background: "rgba(107,70,193,0.15)", color: "#6b46c1" 
+            background: "rgba(139,92,246,0.15)", color: "var(--color-primary-container)" 
           }}>
             {user?.accountType || "USER"}
           </span>
@@ -166,15 +166,15 @@ const Profile = () => {
           
           <div style={{ 
             display: "flex", alignItems: "center", gap: 16, padding: "16px 24px",
-            borderBottom: "1px solid rgba(255,255,255,0.35)", transition: "background 0.2s"
+            borderBottom: "1px solid var(--color-outline)", transition: "background 0.2s"
           }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(107,70,193,0.08)",
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(139,92,246,0.1)",
               display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#6b46c1" }}>mail</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--color-primary-container)" }}>mail</span>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 11, color: "#7a7484", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>Email Address</p>
-              <p style={{ fontSize: 14, fontWeight: 600, color: "#181c1e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>Email Address</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-on-surface)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {user?.email}
               </p>
             </div>
@@ -182,24 +182,24 @@ const Profile = () => {
 
           <div style={{ 
             display: "flex", alignItems: "center", gap: 16, padding: "16px 24px",
-            borderBottom: "1px solid rgba(255,255,255,0.35)", transition: "background 0.2s"
+            borderBottom: "1px solid var(--color-outline)", transition: "background 0.2s"
           }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(107,70,193,0.08)",
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(139,92,246,0.1)",
               display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#6b46c1" }}>call</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--color-primary-container)" }}>call</span>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 11, color: "#7a7484", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>Phone Number</p>
+              <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>Phone Number</p>
               {isEditing ? (
                 <input 
                   type="text" 
                   value={editPhone} 
                   onChange={(e) => setEditPhone(e.target.value)} 
                   placeholder="Enter phone number"
-                  style={{ width: "100%", padding: "6px 12px", borderRadius: 8, border: "1px solid rgba(107,70,193,0.2)", fontSize: 14 }}
+                  style={{ width: "100%", padding: "11px 14px", borderRadius: 8, border: "1.5px solid rgba(255,255,255,0.1)", background: "rgba(13, 17, 30, 0.6)", color: "#fff", fontSize: 14 }}
                 />
               ) : (
-                <p style={{ fontSize: 14, fontWeight: 600, color: "#181c1e" }}>{displayPhone}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-on-surface)" }}>{displayPhone}</p>
               )}
             </div>
           </div>
@@ -208,22 +208,22 @@ const Profile = () => {
             display: "flex", alignItems: "center", gap: 16, padding: "16px 24px",
             transition: "background 0.2s"
           }}>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(107,70,193,0.08)",
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(139,92,246,0.1)",
               display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, color: "#6b46c1" }}>home</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--color-primary-container)" }}>home</span>
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 11, color: "#7a7484", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>Home Address</p>
+              <p style={{ fontSize: 11, color: "var(--color-on-surface-variant)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>Home Address</p>
               {isEditing ? (
                 <textarea 
                   value={editAddress} 
                   onChange={(e) => setEditAddress(e.target.value)} 
                   placeholder="Enter default address"
                   rows={2}
-                  style={{ width: "100%", padding: "6px 12px", borderRadius: 8, border: "1px solid rgba(107,70,193,0.2)", fontSize: 14, resize: "none" }}
+                  style={{ width: "100%", padding: "11px 14px", borderRadius: 8, border: "1.5px solid rgba(255,255,255,0.1)", background: "rgba(13, 17, 30, 0.6)", color: "#fff", fontSize: 14, resize: "none" }}
                 />
               ) : (
-                <p style={{ fontSize: 14, fontWeight: 600, color: "#181c1e" }}>{user?.address || "Not provided"}</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: "var(--color-on-surface)" }}>{user?.address || "Not provided"}</p>
               )}
             </div>
           </div>
@@ -231,13 +231,13 @@ const Profile = () => {
         </div>
 
         {/* Action Bar */}
-        <div style={{ padding: "20px 24px", background: "rgba(255,255,255,0.2)", borderTop: "1px solid rgba(255,255,255,0.4)", display: "flex", gap: 12 }}>
+        <div style={{ padding: "20px 24px", background: "rgba(0,0,0,0.2)", borderTop: "1px solid var(--color-outline)", display: "flex", gap: 12 }}>
           {isEditing ? (
             <>
               <button onClick={() => { setIsEditing(false); setEditPhone(displayPhone); setEditAddress(user?.address || ""); }}
                 style={{
-                  flex: 1, padding: "12px", borderRadius: 12, border: "1px solid rgba(107,70,193,0.2)", cursor: "pointer",
-                  background: "transparent", color: "#181c1e", fontWeight: 700, fontSize: "0.95rem"
+                  flex: 1, padding: "12px", borderRadius: 12, border: "1.5px solid rgba(255,255,255,0.1)", cursor: "pointer",
+                  background: "transparent", color: "var(--color-on-surface)", fontWeight: 700, fontSize: "0.95rem"
                 }}>
                 Cancel
               </button>
@@ -252,10 +252,10 @@ const Profile = () => {
                 width: "100%", padding: "14px", borderRadius: 12, border: "none", cursor: "pointer",
                 background: "#dc2626", color: "#fff", fontWeight: 700, fontSize: "0.95rem",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                transition: "all 0.2s", boxShadow: "0 4px 14px rgba(220,38,38,0.2)"
+                transition: "all 0.2s", boxShadow: "0 4px 14px rgba(0,0,0,0.3)"
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(220,38,38,0.3)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(220,38,38,0.2)"; }}>
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(220,38,38,0.4)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.3)"; }}>
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>logout</span>
               Sign Out
             </button>

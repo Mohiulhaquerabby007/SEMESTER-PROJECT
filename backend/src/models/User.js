@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      default: "",
+      required: [true, "Phone is required"],
       trim: true,
     },
     password: {
@@ -62,8 +62,10 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.matchPassword = function (entered) {
+  return bcrypt.compare(entered, this.password);
 };
+
+userSchema.methods.comparePassword = userSchema.methods.matchPassword;
 
 module.exports = mongoose.model("User", userSchema);

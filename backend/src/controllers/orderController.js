@@ -10,8 +10,8 @@ exports.createOrder = async (req, res) => {
     } = req.body;
 
     if (clientOrderId) {
-      const existing = await Order.findOne({ clientOrderId });
-      if (existing) return res.json(existing);
+      const existing = await Order.findOne({ clientOrderId, user: req.user._id });
+      if (existing) return res.status(200).json(existing);
     }
 
     let price = calculatePrice({ distance, parcelType, weight });
