@@ -8,23 +8,27 @@ const connectDB = require("./config/db");
 const app    = express();
 const server = http.createServer(app);
 
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://flexypay-82d33.web.app",
+  "https://flexypay-82d33.firebaseapp.com",
+  "https://flexypay-82d3382d33.web.app",
+  "https://flexypay-82d3382d33.firebaseapp.com",
+  "https://dating-9fbf9.web.app",
+  "https://dating-9fbf9.firebaseapp.com",
+  "https://8ynnqs29.us-east.insforge.app",
+];
+
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "https://flexypay-82d33.web.app",
-      "https://flexypay-82d33.firebaseapp.com",
-      "https://flexypay-82d3382d33.web.app",
-      "https://flexypay-82d3382d33.firebaseapp.com"
-    ],
-    methods: ["GET","POST"],
+    origin: ALLOWED_ORIGINS,
+    methods: ["GET", "POST", "PATCH", "DELETE"],
   },
 });
 
-// Make io accessible from controllers
 app.set("io", io);
 
 io.on("connection", (socket) => {
@@ -48,43 +52,20 @@ io.on("connection", (socket) => {
 
 try {
   const admin = require("firebase-admin");
-  const fs = require("fs");
-  const path = require("path");
-
-  // Look in different locations for the service account file
-  const possiblePaths = [
-    path.join(__dirname, "config", "firebase-service-account.json"), // Local src/config
-    path.join(process.cwd(), "firebase-service-account.json"),       // Root (Render Secret File)
-    "/etc/secrets/firebase-service-account.json"                    // Render standard secret path
-  ];
-
   let serviceAccount;
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) {
-      serviceAccount = require(p);
-      console.log(`✅ Loading Firebase credentials from: ${p}`);
-      break;
-    }
-  }
-
-  if (serviceAccount) {
-    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-    console.log("🔥 Firebase Admin initialized");
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
   } else {
-    throw new Error("Service account file not found in any expected location");
+    serviceAccount = require("./config/firebase-service-account.json");
   }
-} catch (err) {
-  console.log("⚠️ Firebase Admin not initialized:", err.message);
+  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+  console.log("🔥 Firebase Admin initialized");
+} catch {
+  console.log("⚠️ Firebase Admin not initialized (service account missing)");
 }
 
 app.use(cors({
-  origin: [
-    "http://localhost:5174",
-    "https://flexypay-82d33.web.app",
-    "https://flexypay-82d33.firebaseapp.com",
-    "https://flexypay-82d3382d33.web.app",
-    "https://flexypay-82d3382d33.firebaseapp.com"
-  ],
+  origin: ALLOWED_ORIGINS,
   credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));
@@ -106,9 +87,10 @@ app.get("/api/force-seed", async (req, res) => {
     const User  = require("./models/User");
     const Rider = require("./models/Rider");
     const Order = require("./models/Order");
-    await Promise.all([User.deleteMany({}), Rider.deleteMany({}), Order.deleteMany({})]);
+    const Coupon = require("./models/Coupon");
+    await Promise.all([User.deleteMany({}), Rider.deleteMany({}), Order.deleteMany({}), Coupon.deleteMany({})]);
     await autoSeedIfEmpty();
-    res.json({ message: "✅ Force seed complete! 6 users, 5 riders, 60 orders created." });
+    res.json({ message: "✅ Force seed complete! Users, riders, orders, and coupons created." });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -126,6 +108,7 @@ const dropLegacyIndexes = async () => {
 
   const drops = [
     { col: "users",  index: "phone_1",          label: "phone_1 unique index from users" },
+    { col: "riders", index: "phone_1",           label: "phone_1 unique index from riders" },
     { col: "orders", index: "clientOrderId_1",   label: "clientOrderId_1 non-sparse index from orders" },
   ];
 
