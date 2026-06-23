@@ -30,3 +30,6 @@ google-services.json
 .roo
 .trae
 .windsurf
+
+# Local database files
+.mongo-persist/

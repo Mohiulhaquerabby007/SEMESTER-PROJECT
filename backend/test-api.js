@@ -56,6 +56,7 @@ async function run() {
   // 2. User Login
   try {
     const r = await request("POST", "/api/auth/login", { email: "mohiul@test.com", password: "test1234" });
+    log("hgfgydjg")
     userToken = r.body.token;
     log("POST /api/auth/login (user)", r.status === 200 && !!userToken, `got token: ${!!userToken}`);
   } catch (e) { log("POST /api/auth/login (user)", false, e.message); }

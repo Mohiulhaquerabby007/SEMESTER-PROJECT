@@ -21,7 +21,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password, isRider = false) => {
+
     const endpoint = isRider ? "/auth/rider/login" : "/auth/login";
+    console.log(endpoint);
+    
     const { data } = await api.post(endpoint, { email, password });
     const userData = { ...data, accountType: isRider ? "rider" : data.role === "admin" ? "admin" : "user" };
     localStorage.setItem("quickdrop_auth", JSON.stringify(userData));

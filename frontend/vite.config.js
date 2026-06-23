@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     port: 3000,
     strictPort: true,   // never silently switch to 3001 — fail loudly if 3000 is taken
+    allowedHosts: "all", // allow ngrok and other tunnels
     proxy: {
       "/api": {
         target: "http://localhost:5005",
