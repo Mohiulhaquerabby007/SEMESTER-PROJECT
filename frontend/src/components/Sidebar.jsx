@@ -88,24 +88,42 @@ const Sidebar = () => {
 
       {/* User footer */}
       <div style={{ borderTop: "1px solid var(--color-outline)", paddingTop: 12, marginTop: 8 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 8px" }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: "50%",
-            background: "var(--color-primary)", color: "#fff", overflow: "hidden",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontWeight: 700, fontSize: "0.8rem", flexShrink: 0,
-          }}>
-            {user.profilePic ? (
-              <img src={user.profilePic} alt="User" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            ) : (
-              initials
-            )}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-on-surface)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {user.name}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div 
+            onClick={() => navigate(profilePath)}
+            title="View Profile"
+            style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: 10, 
+              padding: "6px 8px", 
+              cursor: "pointer", 
+              flex: 1, 
+              minWidth: 0, 
+              borderRadius: 10, 
+              transition: "background 0.2s" 
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "var(--color-outline-variant)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          >
+            <div style={{
+              width: 36, height: 36, borderRadius: "50%",
+              background: "var(--color-primary)", color: "#fff", overflow: "hidden",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 700, fontSize: "0.8rem", flexShrink: 0,
+            }}>
+              {user.profilePic ? (
+                <img src={user.profilePic} alt="User" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                initials
+              )}
             </div>
-            <div style={{ fontSize: 10, color: "var(--color-on-surface-variant)" }}>{roleLabel[user.accountType]}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-on-surface)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {user.name}
+              </div>
+              <div style={{ fontSize: 10, color: "var(--color-on-surface-variant)" }}>{roleLabel[user.accountType]}</div>
+            </div>
           </div>
           <button onClick={logout} title="Logout"
             style={{ background: "none", border: "none", cursor: "pointer", padding: 6, borderRadius: 8, color: "var(--color-on-surface-variant)", display: "flex", transition: "all .15s" }}

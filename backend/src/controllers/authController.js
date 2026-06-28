@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const { OAuth2Client } = require("google-auth-library");
 const User = require("../models/User");
 const Rider = require("../models/Rider");
+const { uploadToImageBB } = require("../utils/imagebb");
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -16,16 +17,26 @@ const generateToken = (id, role) =>
 
 exports.registerUser = async (req, res) => {
   try {
+    // Validation already handled by validators middleware
     const { name, email, phone, password, address } = req.body;
-    const exists = await User.findOne({ email });
+    const cleanName  = (name || "").trim();
+    const cleanEmail = (email || "").trim().toLowerCase();
+    const cleanPhone = (phone || "").trim();
+
+    const exists = await User.findOne({ email: cleanEmail });
     if (exists) return res.status(400).json({ message: "User already exists" });
-    const user = await User.create({ name, email, phone, password, address });
+
+    const phoneExists = await User.findOne({ phone: cleanPhone });
+    if (phoneExists) return res.status(400).json({ message: "Phone number is already in use by another user account" });
+
+    const user = await User.create({ name: cleanName, email: cleanEmail, phone: cleanPhone, password, address });
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       phone: user.phone,
       role: user.role,
+      profilePic: user.profilePic || "",
       token: generateToken(user._id, user.role),
     });
   } catch (error) {
@@ -36,15 +47,47 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ message: "Email and password are required" });
+
     const user = await User.findOne({ email: email.trim().toLowerCase() }).select("+password");
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
+
+    // Brute-force lockout check
+    const MAX_ATTEMPTS = 5;
+    const LOCK_TIME_MS = 30 * 60 * 1000; // 30 minutes
+
+    if (user.lockUntil && user.lockUntil > Date.now()) {
+      const minutesLeft = Math.ceil((user.lockUntil - Date.now()) / 60000);
+      return res.status(423).json({
+        message: `Account locked due to too many failed attempts. Try again in ${minutesLeft} minute(s).`,
+      });
+    }
+
+    // If lock expired, reset counters
+    if (user.lockUntil && user.lockUntil <= Date.now()) {
+      user.loginAttempts = 0;
+      user.lockUntil = null;
+    }
+
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ message: "Invalid credentials" });
+    if (!match) {
+      user.loginAttempts = (user.loginAttempts || 0) + 1;
+      if (user.loginAttempts >= MAX_ATTEMPTS) {
+        user.lockUntil = new Date(Date.now() + LOCK_TIME_MS);
+      }
+      await user.save();
+
+      const remaining = MAX_ATTEMPTS - user.loginAttempts;
+      if (remaining > 0) {
+        return res.status(401).json({ message: `Invalid credentials. ${remaining} attempt(s) remaining.` });
+      }
+      return res.status(423).json({ message: "Account locked due to too many failed attempts. Try again in 30 minutes." });
+    }
+
     if (user.isBlocked) return res.status(403).json({ message: "Account blocked" });
-    
-    // Update lastLogin
+
+    // Successful login — reset lockout counters
+    user.loginAttempts = 0;
+    user.lockUntil = null;
     user.lastLogin = new Date();
     await user.save();
 
@@ -54,6 +97,7 @@ exports.loginUser = async (req, res) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      profilePic: user.profilePic || "",
       token: generateToken(user._id, user.role),
     });
   } catch (error) {
@@ -63,16 +107,47 @@ exports.loginUser = async (req, res) => {
 
 exports.registerRider = async (req, res) => {
   try {
+    // Validation already handled by validators middleware
     const { name, email, phone, password, vehicleType, nidImage } = req.body;
-    const exists = await Rider.findOne({ email });
-    if (exists) return res.status(400).json({ message: "Rider already exists" });
-    const rider = await Rider.create({ name, email, phone, password, vehicleType, nidImage });
+    const cleanName    = (name || "").trim();
+    const cleanEmail   = (email || "").trim().toLowerCase();
+    const cleanPhone   = (phone || "").trim();
+    const cleanVehicle = (vehicleType || "").trim().toLowerCase();
+
+    // Check if rider already exists by email
+    const exists = await Rider.findOne({ email: cleanEmail });
+    if (exists) return res.status(400).json({ message: "Rider already exists with this email" });
+
+    // Check if phone number is already registered by another rider
+    const phoneExists = await Rider.findOne({ phone: cleanPhone });
+    if (phoneExists) return res.status(400).json({ message: "Phone number is already in use by another rider account" });
+
+    // Upload NID Image to ImageBB and retrieve hosted URL
+    let uploadedNidUrl;
+    try {
+      uploadedNidUrl = await uploadToImageBB(nidImage);
+    } catch (uploadError) {
+      return res.status(400).json({ message: uploadError.message });
+    }
+
+    // Create Rider with the uploaded ImageBB URL
+    const rider = await Rider.create({
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      password,
+      vehicleType: cleanVehicle,
+      nidImage: uploadedNidUrl,
+    });
+
     res.status(201).json({
       _id: rider._id,
       name: rider.name,
       email: rider.email,
       phone: rider.phone,
       vehicleType: rider.vehicleType,
+      profilePic: rider.profilePic,
+      nidImage: rider.nidImage,
       role: "rider",
       token: generateToken(rider._id, "rider"),
     });
@@ -84,19 +159,57 @@ exports.registerRider = async (req, res) => {
 exports.loginRider = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ message: "Email and password are required" });
+
     const rider = await Rider.findOne({ email: email.trim().toLowerCase() }).select("+password");
     if (!rider) return res.status(401).json({ message: "Invalid credentials" });
+
+    // Brute-force lockout check
+    const MAX_ATTEMPTS = 5;
+    const LOCK_TIME_MS = 30 * 60 * 1000; // 30 minutes
+
+    if (rider.lockUntil && rider.lockUntil > Date.now()) {
+      const minutesLeft = Math.ceil((rider.lockUntil - Date.now()) / 60000);
+      return res.status(423).json({
+        message: `Account locked due to too many failed attempts. Try again in ${minutesLeft} minute(s).`,
+      });
+    }
+
+    // If lock expired, reset counters
+    if (rider.lockUntil && rider.lockUntil <= Date.now()) {
+      rider.loginAttempts = 0;
+      rider.lockUntil = null;
+    }
+
     const match = await bcrypt.compare(password, rider.password);
-    if (!match) return res.status(401).json({ message: "Invalid credentials" });
+    if (!match) {
+      rider.loginAttempts = (rider.loginAttempts || 0) + 1;
+      if (rider.loginAttempts >= MAX_ATTEMPTS) {
+        rider.lockUntil = new Date(Date.now() + LOCK_TIME_MS);
+      }
+      await rider.save();
+
+      const remaining = MAX_ATTEMPTS - rider.loginAttempts;
+      if (remaining > 0) {
+        return res.status(401).json({ message: `Invalid credentials. ${remaining} attempt(s) remaining.` });
+      }
+      return res.status(423).json({ message: "Account locked due to too many failed attempts. Try again in 30 minutes." });
+    }
+
     if (rider.isBlocked) return res.status(403).json({ message: "Account blocked" });
+
+    // Successful login — reset lockout counters
+    rider.loginAttempts = 0;
+    rider.lockUntil = null;
+    await rider.save();
+
     res.json({
       _id: rider._id,
       name: rider.name,
       email: rider.email,
       phone: rider.phone,
       vehicleType: rider.vehicleType,
+      profilePic: rider.profilePic,
+      nidImage: rider.nidImage,
       role: "rider",
       token: generateToken(rider._id, "rider"),
     });
@@ -191,7 +304,25 @@ exports.updateProfilePic = async (req, res) => {
   try {
     const Model = req.accountType === "rider" ? Rider : User;
     const { profilePic } = req.body;
-    const account = await Model.findByIdAndUpdate(req.user._id, { profilePic }, { new: true });
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile picture is required" });
+    }
+
+    // Determine if it is a base64 string or already a URL
+    let uploadedPicUrl = profilePic;
+    if (profilePic.includes(";base64,") || !profilePic.startsWith("http")) {
+      try {
+        uploadedPicUrl = await uploadToImageBB(profilePic);
+      } catch (uploadError) {
+        return res.status(400).json({ message: uploadError.message });
+      }
+    }
+
+    const account = await Model.findByIdAndUpdate(
+      req.user._id,
+      { profilePic: uploadedPicUrl },
+      { new: true }
+    );
     res.json({ message: "Profile picture updated", profilePic: account.profilePic });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -203,10 +334,14 @@ exports.updateProfileDetails = async (req, res) => {
     const Model = req.accountType === "rider" ? Rider : User;
     const { phone, address } = req.body;
     
-    // Only update fields that are provided
+    // Only update whitelisted fields that are provided (prevents mass-assignment)
     const updates = {};
-    if (phone !== undefined) updates.phone = phone;
-    if (address !== undefined) updates.address = address;
+    if (phone !== undefined) updates.phone = String(phone).trim();
+    if (address !== undefined) updates.address = String(address).trim();
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update" });
+    }
 
     const account = await Model.findByIdAndUpdate(req.user._id, updates, { new: true });
     
@@ -239,7 +374,20 @@ exports.updateRiderNid = async (req, res) => {
   try {
     const { nidImage } = req.body;
     if (!nidImage) return res.status(400).json({ message: "NID image is required" });
-    const rider = await Rider.findByIdAndUpdate(req.user._id, { nidImage }, { new: true });
+
+    // Upload the updated NID Image to ImageBB
+    let uploadedNidUrl;
+    try {
+      uploadedNidUrl = await uploadToImageBB(nidImage);
+    } catch (uploadError) {
+      return res.status(400).json({ message: uploadError.message });
+    }
+
+    const rider = await Rider.findByIdAndUpdate(
+      req.user._id,
+      { nidImage: uploadedNidUrl },
+      { new: true }
+    );
     res.json({ message: "NID image updated successfully", nidImage: rider.nidImage });
   } catch (error) {
     res.status(500).json({ message: error.message });

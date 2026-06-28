@@ -64,12 +64,34 @@ try {
   console.log("⚠️ Firebase Admin not initialized (service account missing)");
 }
 
+const helmet          = require("helmet");
+const rateLimit       = require("express-rate-limit");
+const globalSanitizers = require("./middleware/sanitize");
+
 app.use(cors({
   origin: ALLOWED_ORIGINS,
   credentials: true,
 }));
+
+// Security headers
+app.use(helmet());
+
+// Parse JSON bodies (limit payload size to prevent DoS)
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
+// Global input sanitization (NoSQL injection, XSS, HPP)
+app.use(...globalSanitizers());
+
+// Global rate limiter — 200 requests per 15 minutes per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many requests, please try again later" },
+});
+app.use(globalLimiter);
 
 app.use("/api/auth",          require("./routes/auth"));
 app.use("/api/orders",        require("./routes/orders"));

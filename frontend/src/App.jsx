@@ -84,7 +84,7 @@ const App = () => {
             <Route path="/user/book"       element={<ProtectedRoute allowedTypes={["user"]}><BookParcel /></ProtectedRoute>} />
             <Route path="/user/orders"     element={<ProtectedRoute allowedTypes={["user"]}><OrderHistory /></ProtectedRoute>} />
             <Route path="/user/orders/:id" element={<ProtectedRoute allowedTypes={["user"]}><OrderDetails /></ProtectedRoute>} />
-            <Route path="/user/profile"    element={<ProtectedRoute allowedTypes={["user"]}><Profile /></ProtectedRoute>} />
+            <Route path="/user/profile"    element={<ProtectedRoute allowedTypes={["user", "admin"]}><Profile /></ProtectedRoute>} />
 
             <Route path="/rider/dashboard"  element={<ProtectedRoute allowedTypes={["rider"]}><RiderDashboard /></ProtectedRoute>} />
             <Route path="/rider/pending"    element={<ProtectedRoute allowedTypes={["rider"]}><PendingOrders /></ProtectedRoute>} />

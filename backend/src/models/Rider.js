@@ -29,7 +29,7 @@ const riderSchema = new mongoose.Schema(
     },
     vehicleType: {
       type: String,
-      enum: ["bicycle", "motorcycle", "car"],
+      enum: ["bicycle", "motorcycle", "car", "bike", "van"],
       default: "motorcycle",
     },
     isAvailable: {
@@ -61,6 +61,15 @@ const riderSchema = new mongoose.Schema(
     nidImage: {
       type: String,
       default: "",
+    },
+    loginAttempts: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    lockUntil: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import NotificationInbox from "./NotificationInbox";
 
@@ -9,6 +10,9 @@ const Header = () => {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showNotifs, setShowNotifs] = useState(false);
+  const navigate = useNavigate();
+
+  const profilePath = user?.accountType === "rider" ? "/rider/profile" : "/user/profile";
 
   const { data: notifications = [] } = useQuery({
     queryKey: ["myNotifications"],
@@ -119,7 +123,23 @@ const Header = () => {
         )}
 
         {/* User Mini Profile */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 8px", borderRadius: 12, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.05)" }}>
+        <div 
+          onClick={() => navigate(profilePath)}
+          title="View Profile"
+          style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: 10, 
+            padding: "4px 8px", 
+            borderRadius: 12, 
+            background: "rgba(255,255,255,0.05)", 
+            border: "1px solid rgba(255,255,255,0.05)",
+            cursor: "pointer",
+            transition: "background 0.2s"
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
+          onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+        >
           <div style={{ textAlign: "right", display: "none" }} className="md:block">
             <p style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-on-surface)", lineHeight: 1.2 }}>{user.name.split(" ")[0]}</p>
             <p style={{ fontSize: "10px", color: "var(--color-on-surface-variant)", marginTop: 2 }}>{user.accountType}</p>

@@ -57,12 +57,52 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const cleanName = form.name.trim();
+    const cleanEmail = form.email.trim().toLowerCase();
+    const cleanPhone = form.phone.trim();
+    const cleanPassword = form.password;
+
+    if (!cleanName) {
+      return toast.error("Name is required");
+    }
+    if (cleanName.length < 2 || cleanName.length > 50) {
+      return toast.error("Name must be between 2 and 50 characters");
+    }
+
+    if (!cleanEmail) {
+      return toast.error("Email address is required");
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return toast.error("Please enter a valid email address");
+    }
+
+    if (!cleanPhone) {
+      return toast.error("Phone number is required");
+    }
+    const phoneRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      return toast.error("Please enter a valid 11-digit phone number (e.g. 017xxxxxxxx)");
+    }
+
+    if (!cleanPassword || cleanPassword.length < 6) {
+      return toast.error("Password must be at least 6 characters long");
+    }
+
     if (isRider && !form.nidImage) {
       return toast.error("Please upload a picture of your NID Card");
     }
+
     setLoading(true);
     try {
-      await register(form, isRider);
+      const payload = {
+        ...form,
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
+      };
+      await register(payload, isRider);
       toast.success("Account created! Welcome to QuickDrop.");
       navigate(isRider ? "/rider/dashboard" : "/user/dashboard");
     } catch (err) {

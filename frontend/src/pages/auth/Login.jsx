@@ -23,9 +23,25 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password;
+
+    if (!cleanEmail) {
+      return toast.error("Email address is required");
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return toast.error("Please enter a valid email address");
+    }
+
+    if (!cleanPassword || cleanPassword.length < 6) {
+      return toast.error("Password must be at least 6 characters long");
+    }
+
     setLoading(true);
     try {
-      const user = await login(email, password, isRider);
+      const user = await login(cleanEmail, cleanPassword, isRider);
       toast.success(`Welcome back, ${user.name}! 👋`);
       redirect(user);
     } catch (err) {

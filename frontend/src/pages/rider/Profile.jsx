@@ -13,7 +13,14 @@ const RiderProfile = () => {
   const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = useState(false);
 
-  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : "QD";
+  // Fetch rider profile details including nidImage dynamically
+  const { data: profile } = useQuery({
+    queryKey: ["riderProfile"],
+    queryFn: () => api.get("/riders/profile").then((r) => r.data),
+  });
+
+  const displayUser = profile || user;
+  const initials = displayUser?.name ? displayUser.name.slice(0, 2).toUpperCase() : "QD";
 
   const { data: earnings } = useQuery({
     queryKey: ["riderEarnings"],
@@ -26,6 +33,7 @@ const RiderProfile = () => {
     onSuccess: (_, isAvailable) => {
       updateUser({ isAvailable });
       queryClient.invalidateQueries({ queryKey: ["riderEarnings"] });
+      queryClient.invalidateQueries({ queryKey: ["riderProfile"] });
       toast.success(
         isAvailable ? "You are now available for jobs" : "You are now offline"
       );
@@ -54,6 +62,7 @@ const RiderProfile = () => {
         try {
           const res = await api.patch("/auth/profile-pic", { profilePic: base64Str });
           updateUser({ profilePic: res.data.profilePic });
+          queryClient.invalidateQueries({ queryKey: ["riderProfile"] });
           toast.success("Profile picture updated!");
         } catch {
           toast.error("Failed to update profile picture");
@@ -104,8 +113,8 @@ const RiderProfile = () => {
             >
               {isUploading ? (
                 <div className="animate-spin" style={{ width: 24, height: 24, borderRadius: "50%", border: "3px solid rgba(255,255,255,0.3)", borderTopColor: "#fff" }} />
-              ) : user?.profilePic ? (
-                <img src={user.profilePic} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : displayUser?.profilePic ? (
+                <img src={displayUser.profilePic} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 initials
               )}
@@ -119,35 +128,37 @@ const RiderProfile = () => {
             </div>
 
             <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--color-on-surface)", marginBottom: 4 }}>
-              {user?.name || "Rider"}
+              {displayUser?.name || "Rider"}
             </h2>
             <span style={{
               padding: "4px 12px", borderRadius: 999, fontSize: 11, fontWeight: 800,
               textTransform: "uppercase", letterSpacing: "0.08em",
               background: "rgba(139,92,246,0.15)", color: "var(--color-primary-container)",
             }}>
-              {VEHICLE_ICONS[user?.vehicleType] || "🏍️"} Delivery Partner
+              {VEHICLE_ICONS[displayUser?.vehicleType] || "🏍️"} Delivery Partner
             </span>
           </div>
 
           {/* Details */}
           <div style={{ padding: "8px 0" }}>
             {[
-              { icon: "mail",         label: "Email Address",  value: user?.email },
-              { icon: "call",         label: "Phone Number",   value: user?.phone },
-              { icon: "two_wheeler",  label: "Vehicle Type",   value: VEHICLE_LABELS[user?.vehicleType] || user?.vehicleType || "N/A" },
+              { icon: "mail", label: "Email Address", value: displayUser?.email },
+              { icon: "call", label: "Phone Number", value: displayUser?.phone },
+              { icon: "two_wheeler", label: "Vehicle Type", value: VEHICLE_LABELS[displayUser?.vehicleType] || displayUser?.vehicleType || "N/A" },
               { icon: "check_circle", label: "Completed Deliveries", value: earnings?.completedDeliveries ?? "—" },
-              { icon: "payments",     label: "Total Earnings (80%)", value: earnings ? `৳${Math.round(earnings.totalEarnings * 0.8).toLocaleString()}` : "—" },
+              { icon: "payments", label: "Total Earnings (80%)", value: earnings ? `৳${Math.round(earnings.totalEarnings * 0.8).toLocaleString()}` : "—" },
             ].map(({ icon, label, value }, i, arr) => (
               <div key={label} style={{
                 display: "flex", alignItems: "center", gap: 16, padding: "16px 24px",
                 borderBottom: i < arr.length - 1 ? "1px solid var(--color-outline)" : "none",
                 transition: "background 0.2s",
               }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(139,92,246,0.1)",
-                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 12, background: "rgba(139,92,246,0.1)",
+                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+                }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 20, color: "var(--color-primary-container)" }}>{icon}</span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -162,6 +173,39 @@ const RiderProfile = () => {
             ))}
           </div>
         </div>
+
+        {/* ── NID Image Card ── */}
+        {displayUser?.nidImage && (
+          <div className="glass-panel" style={{ borderRadius: 20, padding: "24px", display: "flex", flexDirection: "column", gap: 12 }}>
+            <div>
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--color-on-surface)" }}>National ID (NID) Card</h3>
+              <p style={{ fontSize: 12, color: "var(--color-on-surface-variant)", marginTop: 2 }}>Registered identification card for verification.</p>
+            </div>
+            <div style={{
+              width: "100%",
+              maxHeight: 240,
+              borderRadius: 12,
+              overflow: "hidden",
+              border: "1px solid var(--color-outline)",
+              background: "rgba(0,0,0,0.15)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 8
+            }}>
+              <img
+                src={displayUser.nidImage}
+                alt="NID Card"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: 220,
+                  objectFit: "contain",
+                  borderRadius: 8
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* ── Availability toggle ── */}
         <div className="glass-panel" style={{ borderRadius: 16, padding: "20px 24px" }}>
